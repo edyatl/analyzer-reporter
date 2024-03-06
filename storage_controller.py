@@ -17,6 +17,8 @@ from logger import get_cls_logger
 class StorageController:
     """Class to control USB storage"""
 
+    logger = get_cls_logger(__qualname__)
+
     def __init__(self):
         self.usb_plugged: bool = self.check_usb_plugged()
         self.mount_point: str = None
@@ -41,6 +43,17 @@ class StorageController:
 
             if self.free_space > cfg.WRITE_TRESHOLD:
                 self.ready_to_write = True
+
+        self.logger.debug("Make an instance of %s class", self.__class__.__name__)
+        self.logger.debug("USB Plugged: %s", self.usb_plugged)
+        self.logger.debug("Mount Point: %s", self.mount_point)
+        self.logger.debug("Data Directory: %s", self.data_dir)
+        self.logger.debug("Last PDF Report: %s", self.last_pdf_report)
+        self.logger.debug("Last PDF Report date: %s", self.last_pdf_report_date)
+        self.logger.debug("Last PDF Report index: %s", self.last_pdf_report_idx)
+        self.logger.debug("Current PDF Report: %s", self.current_pdf_report)
+        self.logger.debug("Free Space: %s", self.free_space)
+        self.logger.debug("Ready to Write: %s", self.ready_to_write)
 
     def check_usb_plugged(self) -> bool:
         return os.path.exists(cfg.USB_DRIVE)
