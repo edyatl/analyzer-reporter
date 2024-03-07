@@ -19,21 +19,38 @@ class Configuration(object):
     DEBUG = True
     SHOW_GRID = True
 
+    # Real Capture
+    REAL_CAPTURE = False
+    EXAMPLE_DATA = "data4.csv"
+    EXAMPLE_DATA_DIR = "../"
+
     # Set a list of ten main contrast colors + gray
     COLORS = [
-                "#1f77b4", #  1 blue
-                "#ff7f0e", #  2 orange
-                "#2ca02c", #  3 green
-                "#d62728", #  4 red
-                "#9467bd", #  5 purple
-                "#8c564b", #  6 brown
-                "#e377c2", #  7 pink
-                "#bc8dd8", #  8 violet 
-                "#bcbd22", #  9 yellow
-                "#17becf", # 10 cyan
-                "#7f7f7f", # 11 gray
-             ]
-    CLR_NAMES = ["blue", "orange", "green", "red", "purple", "brown", "pink", "violet", "yellow", "cyan", "gray"]
+        "#1f77b4",  #  1 blue
+        "#ff7f0e",  #  2 orange
+        "#2ca02c",  #  3 green
+        "#d62728",  #  4 red
+        "#9467bd",  #  5 purple
+        "#8c564b",  #  6 brown
+        "#e377c2",  #  7 pink
+        "#bc8dd8",  #  8 violet
+        "#bcbd22",  #  9 yellow
+        "#17becf",  # 10 cyan
+        "#7f7f7f",  # 11 gray
+    ]
+    CLR_NAMES = [
+        "blue",
+        "orange",
+        "green",
+        "red",
+        "purple",
+        "brown",
+        "pink",
+        "violet",
+        "yellow",
+        "cyan",
+        "gray",
+    ]
     CLR_DICT = dict(zip(CLR_NAMES, COLORS))
 
     # Date
