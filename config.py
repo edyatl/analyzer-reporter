@@ -19,6 +19,9 @@ class Configuration(object):
     DEBUG = True
     SHOW_GRID = True
 
+    # Signal Processing
+    FILTER_WSIZE = 15
+
     # Real Capture
     REAL_CAPTURE = False
     EXAMPLE_DATA = "data4.csv"
