@@ -69,19 +69,21 @@ class SignalProcessor:
     @staticmethod
     def _signal_pulse_width(ser: pd.Series, n: int) -> tuple:
         """Function to calculate pulse width."""
-        n = n + 1 if n > 0 else 0
+        n = n << 1
         ser_nonzero = np.atleast_1d(ser).nonzero()[0]
         return ser_nonzero[n], ser_nonzero[n + 1], ser_nonzero[n + 1] - ser_nonzero[n]
 
-    # Property function to access points from pulse width dict
     @property
     def pulse_points(self) -> dict:
         """Property to access pulse points (X1, X2)."""
-        return {k: list(map(lambda x: x[:2], v)) for k, v in self.pulse_points_width.items()}
+        return {
+            k: list(map(lambda x: x[:2], v)) for k, v in self.pulse_points_width.items()
+        }
 
-    # Property function to access width from pulse width dict
     @property
     def pulse_width(self) -> dict:
         """Property to access pulse width."""
-        return {k: list(map(lambda x: x[2], v)) for k, v in self.pulse_points_width.items()}
+        return {
+            k: list(map(lambda x: x[2], v)) for k, v in self.pulse_points_width.items()
+        }
 

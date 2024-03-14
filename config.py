@@ -55,6 +55,10 @@ class Configuration(object):
         "gray",
     ]
     CLR_DICT = dict(zip(CLR_NAMES, COLORS))
+    
+    # Report coordinates
+    ATTEMPT_POINT = (470, 767)
+    DATE_POINT = (470, 752)
 
     # Date
     CURRENT_DATE = datetime.now().strftime("%Y-%m-%d")
@@ -68,5 +72,6 @@ class Configuration(object):
     WRITE_TRESHOLD = 100000  # 100KB
     DATA_DIR_NAME = "data"
     REPORT_NAME = f'{CURRENT_DATE}-{IDX_STR}.pdf'
+    TEMPLATE_FILE = os.path.join(os.path.abspath("../"), "template2.pdf")
     LOG_FILE = os.path.join(os.path.dirname(__file__), "analyzer_reporter.log")
 
