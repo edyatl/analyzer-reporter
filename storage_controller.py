@@ -21,6 +21,7 @@ class StorageController:
 
     def __init__(self):
         self.usb_plugged: bool = self.check_usb_plugged()
+        self.usb_mounted: bool = False
         self.mount_point: str = None
         self.data_dir: str = None
         self.pdf_files: list = []
@@ -28,21 +29,24 @@ class StorageController:
         self.last_pdf_report_date: str = None
         self.last_pdf_report_idx: int = 0
         self.current_pdf_report: str = None
+        self.current_pdf_report_idx: int = 0
         self.free_space: int = 0
         self.ready_to_write: bool = False
 
         if self.usb_plugged:
             self.get_mount_point()
-            self.create_data_directory()
-            self.get_pdf_files()
-            self.get_last_pdf_report()
-            self.get_last_pdf_report_date()
-            self.get_last_pdf_report_idx()
-            self.set_current_pdf_report()
-            self.get_free_space()
 
-            if self.free_space > cfg.WRITE_TRESHOLD:
-                self.ready_to_write = True
+            if self.usb_mounted:
+                self.create_data_directory()
+                self.get_pdf_files()
+                self.get_last_pdf_report()
+                self.get_last_pdf_report_date()
+                self.get_last_pdf_report_idx()
+                self.set_current_pdf_report()
+                self.get_free_space()
+
+                if self.free_space > cfg.WRITE_TRESHOLD:
+                    self.ready_to_write = True
 
         self.logger.debug("Make an instance of %s class", self.__class__.__name__)
         self.logger.debug("USB Plugged: %s", self.usb_plugged)
@@ -62,6 +66,7 @@ class StorageController:
         with open("/proc/mounts") as mounts:
             for line in mounts:
                 if cfg.USB_DRIVE in line:
+                    self.usb_mounted = True
                     self.mount_point = line.split()[1]
                     break
 
@@ -90,13 +95,13 @@ class StorageController:
             )
 
     def set_current_pdf_report(self) -> None:
-        idx = (
+        self.current_pdf_report_idx = (
             1
             if cfg.CURRENT_DATE != self.last_pdf_report_date
             else self.last_pdf_report_idx + 1
         )
         self.current_pdf_report = os.path.join(
-            self.data_dir, cfg.REPORT_NAME.format(IDX=str(idx).zfill(3))
+            self.data_dir, cfg.REPORT_NAME.format(IDX=str(self.current_pdf_report_idx).zfill(3))
         )
 
     def get_free_space(self) -> None:

@@ -22,6 +22,7 @@ def main() -> None:
     """
     usb_storage = StorageController()
     print("USB Plugged:", usb_storage.usb_plugged)
+    print("USB Mounted:", usb_storage.usb_mounted)
     print("Mount Point:", usb_storage.mount_point)
     print("Data Directory:", usb_storage.data_dir)
     print("PDF Files:", usb_storage.pdf_files)
@@ -46,16 +47,10 @@ def main() -> None:
 
         grapher.plot_signals()
 
-        idx = (
-            1
-            if cfg.CURRENT_DATE != usb_storage.last_pdf_report_date
-            else usb_storage.last_pdf_report_idx + 1
-        )
-
         generator = ReportGenerator(
             figure=grapher.figure,
             report_file = usb_storage.current_pdf_report,
-            attempt_number = idx,
+            attempt_number = usb_storage.current_pdf_report_idx,
             capture_date = cfg.CURRENT_DATE,
         )
 
