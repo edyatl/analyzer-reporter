@@ -6,28 +6,44 @@
 
 """
 import os
-# from os import environ as env
-# from dotenv import load_dotenv
 from datetime import datetime
 
 
-# project_dotenv = os.path.join(os.path.dirname(__file__), '.env')
-# if os.path.exists(project_dotenv):
-    # load_dotenv(project_dotenv)
-
 class Configuration(object):
+    # Debugging
     DEBUG = True
-    SHOW_GRID = True
+
+    # Plotting
+    SHOW_GRID = True              # Show grid in plots
+    TIME_UNITS = "ms"
 
     # Signal Processing
     FILTER_WSIZE = 15
 
-    # Real Capture
-    REAL_CAPTURE = False
-    EXAMPLE_DATA = "data4.csv"
+    # Data Capture
+    REAL_CAPTURE = False          # Real capturing is not available yet
+    EXAMPLE_DATA = "data4.csv"    # Sample data instead of real capturing
     EXAMPLE_DATA_DIR = "../"
+    
+    # Reporting
+    ATTEMPT_POINT = (470, 767)    # XY point of attempt number in report canvas
+    DATE_POINT = (470, 752)       # XY point of date in report canvas
+    CURRENT_DATE = datetime.now().strftime("%Y-%m-%d")
 
-    # Set a list of ten main contrast colors + gray
+    # USB Storage
+    USB_DEVICE = "sdb"            # Change it to sda on Raspberry Pi
+    USB_PART = USB_DEVICE + "1"
+    USB_DRIVE = os.path.join("/dev", USB_PART)
+    WRITE_TRESHOLD = 100000       # 100KB
+
+    # Paths and Files
+    DATA_DIR_NAME = "data"
+    IDX_STR = "{IDX}"
+    REPORT_NAME = f'{CURRENT_DATE}-{IDX_STR}.pdf'
+    TEMPLATE_FILE = os.path.join(os.path.abspath("../"), "template2.pdf")
+    LOG_FILE = os.path.join(os.path.dirname(__file__), "analyzer_reporter.log")
+
+    # Colors Definition
     COLORS = [
         "#1f77b4",  #  1 blue
         "#ff7f0e",  #  2 orange
@@ -55,23 +71,4 @@ class Configuration(object):
         "gray",
     ]
     CLR_DICT = dict(zip(CLR_NAMES, COLORS))
-    
-    # Report coordinates
-    ATTEMPT_POINT = (470, 767)
-    DATE_POINT = (470, 752)
-
-    # Date
-    CURRENT_DATE = datetime.now().strftime("%Y-%m-%d")
-    IDX_STR = "{IDX}"
-    TIME_UNITS = "ms"
-
-    # Files
-    USB_DEVICE = "sdb"
-    USB_PART = USB_DEVICE + "1"
-    USB_DRIVE = os.path.join("/dev", USB_PART)
-    WRITE_TRESHOLD = 100000  # 100KB
-    DATA_DIR_NAME = "data"
-    REPORT_NAME = f'{CURRENT_DATE}-{IDX_STR}.pdf'
-    TEMPLATE_FILE = os.path.join(os.path.abspath("../"), "template2.pdf")
-    LOG_FILE = os.path.join(os.path.dirname(__file__), "analyzer_reporter.log")
 
