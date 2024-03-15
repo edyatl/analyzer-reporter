@@ -6,109 +6,60 @@
 
 """
 
-# Standard imports os pandas numpy matplotlib.pyplot seaborn scipy
-import os
+# This file is part of the analyzer_reporter project
 
-import pandas as pd
-import numpy as np
-
-import matplotlib.pyplot as plt
-import seaborn as sns
-
-from scipy import signal
-
-
-# Temporary decision to load data
-csv_data = os.path.join(os.path.abspath("../"), "data4.csv")
-df = pd.read_csv(csv_data)
-
-def noise_filter(ser: pd.Series) -> np.array:
-    """
-    Function to filter noise in signal
-
-    :param ser: pd.Series
-    :return: np.array
-    """
-    return signal.medfilt(ser, 15)
-
-def signal_pulse_pivots(ser: pd.Series) -> np.array:
-    """
-    Function to find pulse pivots to measure the signal pulse width
-
-    :param ser: pd.Series
-    :return: np.array
-    """
-    return np.diff(ser)
-
-# Function to calculate number of pulses
-def signal_pulse_count(ser: pd.Series) -> int:
-    """
-    Function to calculate number of pulses
-
-    :param ser: pd.Series
-    :return: int
-    """
-    return len(np.where(ser != 0)[0]) // 2
-
-def signal_pulse_width(ser: pd.Series, n: int) -> tuple:
-    """
-    Function measures the signal n pulse width and returns tuple 
-    (nth pulse x1 point, nth pulse x2 point, pulse time interval)
-
-    :param ser: pd.Series
-    :param n: int
-    :return: tuple
-    """
-    n = n + 1 if n > 0 else 0
-    return (
-        np.where(ser != 0)[0][n],
-        np.where(ser != 0)[0][n + 1],
-        np.where(ser != 0)[0][n + 1] - np.where(ser != 0)[0][n],
-    )
-
-def plot_width(x1: int, x2: int, width: int, i: int) -> None:
-    """
-    Function to plot pulse width
-
-    :param x1: int
-    :param x2: int
-    :param width: int
-    :param i: int
-    :return: None
-    """
-    axes[i].axvline(x1, color="gray")
-    axes[i].axvline(x2, color="gray")
-    axes[i].annotate(
-        "",
-        xy=(x1, 0.5),
-        xytext=(x2, 0.5),
-        arrowprops=dict(arrowstyle="<->", color="gray"),
-    )
-    axes[i].text(
-        (x1 + x2) / 2,
-        0.6,
-        f"{width} ms",
-        ha="center",
-        color="gray",
-    )
-
-class LogicAnalyzerController:
-    pass
-
-class SignalDataProcessor:
-    pass
-
-class StorageChecker:
-    pass
-
-class ReportGenerator:
-    pass
+from config import Configuration as cfg
+from logger import get_cls_logger
+from storage_controller import StorageController
+from analyzer_controller import AnalyzerController
+from signal_processor import SignalProcessor
+from signal_grapher import SignalGrapher
+from report_generator import ReportGenerator
 
 def main() -> None:
     """
     Main function
     """
-    pass
+    usb_storage = StorageController()
+    print("USB Plugged:", usb_storage.usb_plugged)
+    print("Mount Point:", usb_storage.mount_point)
+    print("Data Directory:", usb_storage.data_dir)
+    print("PDF Files:", usb_storage.pdf_files)
+    print("Last PDF Report:", usb_storage.last_pdf_report)
+    print("Last PDF Report date:", usb_storage.last_pdf_report_date)
+    print("Last PDF Report index:", usb_storage.last_pdf_report_idx)
+    print("Current PDF Report:", usb_storage.current_pdf_report)
+    print("Free Space:", usb_storage.free_space)
+    print("Ready to Write:", usb_storage.ready_to_write)
+
+    if usb_storage.ready_to_write:
+        analyzer = AnalyzerController()
+        df = analyzer.capture_signals()
+
+        signal_proc = SignalProcessor(df)
+
+        grapher = SignalGrapher(
+            filtered_signals_df = signal_proc.filtered_signals_df,
+            pulse_counts = signal_proc.pulse_count,
+            pulse_points_width = signal_proc.pulse_points_width,
+        )
+
+        grapher.plot_signals()
+
+        idx = (
+            1
+            if cfg.CURRENT_DATE != usb_storage.last_pdf_report_date
+            else usb_storage.last_pdf_report_idx + 1
+        )
+
+        generator = ReportGenerator(
+            figure=grapher.figure,
+            report_file = usb_storage.current_pdf_report,
+            attempt_number = idx,
+            capture_date = cfg.CURRENT_DATE,
+        )
+
+        generator.generate_report()
 
 if __name__ == "__main__":
     main()

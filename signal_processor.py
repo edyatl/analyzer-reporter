@@ -11,6 +11,8 @@
 import pandas as pd
 import numpy as np
 
+from scipy import signal
+
 from config import Configuration as cfg
 from logger import get_cls_logger
 
