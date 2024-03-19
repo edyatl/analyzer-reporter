@@ -4,15 +4,15 @@ set -e
 
 # Function to check if symbolic links for a package exist
 check_symlinks() {
-    package_name="$1"
-    directory="~/venv/lib/python3.9/site-packages/"
-    sys_dir="/usr/lib/python3/dist-packages/"
+    local package_name="$1"
+    local directory="$HOME/venv/lib/python3.9/site-packages"
+    local sys_dir="/usr/lib/python3/dist-packages"
 
     # Check if symbolic links exist for the package
     if [ -e "$directory/$package_name"* ]; then
         echo "Symbolic links for $package_name already exist in $directory. Skipping."
     else
-        ln -s "$sys_dir/$package_name"* "$directory"
+        ln -s "$sys_dir/$package_name"* "$directory/" || echo "Can't create symbolic links"
     fi
 }
 
@@ -33,8 +33,8 @@ pip uninstall -y scipy || echo "Can't uninstall pandas package"
 
 # Step 4: Create symbolic links from system python3-numpy to virtual environment
 echo "Creating symbolic links..."
-check_symlinks numpy || echo "Can't create symbolic links"
-check_symlinks pandas || echo "Can't create symbolic links"
-check_symlinks scipy || echo "Can't create symbolic links"
+check_symlinks numpy
+check_symlinks pandas
+check_symlinks scipy
 
 echo "Fixing NumPy issue completed successfully!"
