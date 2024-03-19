@@ -38,6 +38,6 @@ check_symlinks numpy
 check_symlinks pandas
 check_symlinks scipy
 check_symlinks matplotlib
-check_symlinks mpl_toolkits
+ln -s /usr/lib/python3/dist-packages/mpl_toolkits/* "$HOME/venv/lib/python3.9/site-packages/mpl_toolkits/" || echo "Can't create symbolic links"
 
 echo "Fixing NumPy issue completed successfully!"
