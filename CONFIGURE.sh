@@ -1,5 +1,7 @@
 #!/bin/env bash
 
+set -e
+
 # Define the configuration file
 CONFIG_FILE="config.py"
 
@@ -74,7 +76,7 @@ create_directory_if_not_exists "$EXAMPLE_DATA_DIR"
 # TIME_UNITS (Skipping as it's not user-configurable)
 
 # USB_DEVICE
-USB_DEVICE=$(prompt_config_value "USB_DEVICE" "sdb")
+USB_DEVICE=$(prompt_config_value "USB_DEVICE" "sda")
 
 # USB_PART (Skipping as it's not user-configurable)
 
@@ -88,7 +90,7 @@ DATA_DIR_NAME=$(prompt_config_value "DATA_DIR_NAME" "data")
 #REPORT_NAME=$(prompt_config_value "REPORT_NAME" "$(date +%Y-%m-%d)-{IDX}.pdf")
 
 # TEMPLATE_FILE
-TEMPLATE_FILE=$(prompt_config_value "TEMPLATE_FILE" "template2.pdf")
+TEMPLATE_FILE=$(prompt_config_value "TEMPLATE_FILE" "template.pdf")
 
 # LOG_FILE
 LOG_FILE=$(prompt_config_value "LOG_FILE" "analyzer_reporter.log")

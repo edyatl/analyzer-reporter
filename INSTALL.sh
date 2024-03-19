@@ -1,5 +1,7 @@
 #!/bin/env bash
 
+set -e
+
 # Check if virtualenv is installed, install if not
 if ! command -v virtualenv &> /dev/null; then
     echo "Installing virtualenv..."
