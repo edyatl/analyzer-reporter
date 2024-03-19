@@ -38,5 +38,6 @@ check_symlinks numpy
 check_symlinks pandas
 check_symlinks scipy
 check_symlinks matplotlib
+check_symlinks mpl_toolkits
 
 echo "Fixing NumPy issue completed successfully!"
