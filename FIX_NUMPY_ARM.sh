@@ -1,5 +1,21 @@
 #!/bin/env bash
 
+# The purpose of this script is to fix an issue with NumPy 
+# on a Raspberry Pi ARM platform running Debian Bullseye. 
+
+# The script achieves this goal by performing the following steps:
+
+# 1. Install System Packages: The script updates the package list and 
+# installs the required system packages (python3-numpy, python3-pandas, 
+# python3-scipy, python3-matplotlib) from the Debian repositories using apt-get.
+
+# 2. Uninstall Packages from Virtual Environment: The script uninstalls the NumPy, 
+# Pandas, SciPy, and Matplotlib packages from the virtual environment using pip uninstall.
+
+# 3. Create Symbolic Links: It creates symbolic links from the system-installed packages 
+# (python3-numpy, python3-pandas, python3-scipy, python3-matplotlib, mpl_toolkits) 
+# into the virtual environment's site-packages directory using the ln command.
+
 set -e
 
 # Function to check if symbolic links for a package exist
@@ -9,35 +25,52 @@ check_symlinks() {
     local sys_dir="/usr/lib/python3/dist-packages"
 
     # Check if symbolic links exist for the package
-    if ls "$directory/$package_name"* 1> /dev/null 2>&1 ; then
+    if ls "$directory/$package_name"* >/dev/null 2>&1; then
         echo "Symbolic links for $package_name already exist in $directory. Skipping."
     else
         ln -s "$sys_dir/$package_name"* "$directory/" || echo "Can't create symbolic links"
     fi
 }
 
-# Step 1: Install system package python3-numpy from Debian's repositories
-echo "Installing system package python3-numpy..."
-sudo apt-get update || echo "Can't update package list"
-sudo apt-get install -y python3-numpy python3-pandas python3-scipy python3-matplotlib || echo "Can't install packages"
+# Step 1: Install system packages
+install_system_packages() {
+    echo "Installing system packages..."
+    sudo apt-get update || { echo "Can't update package list"; exit 1; }
+    sudo apt-get install -y python3-numpy python3-pandas python3-scipy python3-matplotlib || { echo "Can't install packages"; exit 1; }
+}
 
-# Step 2: Activate virtual environment at '../venv' path
-echo "Activating virtual environment..."
-source ../venv/bin/activate || echo "Can't activate virtual environment"
+# Step 2: Activate virtual environment
+activate_virtualenv() {
+    echo "Activating virtual environment..."
+    source ../venv/bin/activate || { echo "Can't activate virtual environment"; exit 1; }
+}
 
-# Step 3: Uninstall numpy package from virtual environment
-echo "Uninstalling numpy package from virtual environment..."
-pip uninstall -y numpy || echo "Can't uninstall numpy package"
-pip uninstall -y pandas || echo "Can't uninstall pandas package"
-pip uninstall -y scipy || echo "Can't uninstall scipy package"
-pip uninstall -y matplotlib || echo "Can't uninstall matplotlib package"
+# Step 3: Uninstall packages from virtual environment
+uninstall_packages() {
+    local packages=("numpy" "pandas" "scipy" "matplotlib")
 
-# Step 4: Create symbolic links from system python3-numpy to virtual environment
-echo "Creating symbolic links..."
-check_symlinks numpy
-check_symlinks pandas
-check_symlinks scipy
-check_symlinks matplotlib
-ln -s /usr/lib/python3/dist-packages/mpl_toolkits/* "$HOME/venv/lib/python3.9/site-packages/mpl_toolkits/" || echo "Can't create symbolic links"
+    echo "Uninstalling packages from virtual environment..."
+    for package in "${packages[@]}"; do
+        pip uninstall -y "$package" || echo "Can't uninstall $package package"
+    done
+}
+
+# Step 4: Create symbolic links from system packages to virtual environment
+create_symlinks() {
+    local packages=("numpy" "pandas" "scipy" "matplotlib" "mpl_toolkits")
+
+    echo "Creating symbolic links..."
+    for package in "${packages[@]}"; do
+        check_symlinks "$package"
+    done
+    ln -s /usr/lib/python3/dist-packages/mpl_toolkits/* "$HOME/venv/lib/python3.9/site-packages/mpl_toolkits/" || echo "Can't create symbolic links"
+}
+
+# Main script
+install_system_packages
+activate_virtualenv
+uninstall_packages
+create_symlinks
 
 echo "Fixing NumPy issue completed successfully!"
+
