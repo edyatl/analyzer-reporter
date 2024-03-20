@@ -21,7 +21,12 @@ class SignalGrapher:
 
     logger = get_cls_logger(__qualname__)
 
-    def __init__(self, filtered_signals_df: pd.DataFrame, pulse_counts: dict, pulse_points_width: dict) -> None:
+    def __init__(
+        self,
+        filtered_signals_df: pd.DataFrame,
+        pulse_counts: dict,
+        pulse_points_width: dict,
+    ) -> None:
         """
         Initialize SignalGrapher.
 
@@ -33,6 +38,7 @@ class SignalGrapher:
         self.pulse_counts = pulse_counts
         self.pulse_points_width = pulse_points_width
         self.figure: pltfg.Figure = None
+        self.vlines: list = []
 
         self.logger.debug("Make an instance of %s class", self.__class__.__name__)
 
@@ -62,13 +68,15 @@ class SignalGrapher:
             )
             axes[i].set_ylabel(col)
 
-            if col in self.pulse_points_width:
+            if col.endswith("4"):
                 for x1, x2, width in self.pulse_points_width[col]:
                     self._plot_pulse_width(axes[i], x1, x2, width)
 
         for ax in axes:
             ax.grid(cfg.SHOW_GRID)
-            self._plot_vertical_lines(ax)
+
+            for vline in self.vlines:
+                self._plot_vertical_lines(ax, vline)
 
         fig.subplots_adjust(
             left=0.12, right=0.95, bottom=bot_mrg, top=0.95, wspace=0.4, hspace=0.4
@@ -89,8 +97,11 @@ class SignalGrapher:
             (x1 + x2) / 2, 0.6, f"{width} ms", ha="center", color=cfg.CLR_DICT["gray"]
         )
 
-    def _plot_vertical_lines(self, ax: plt.Axes) -> None:
+    def _plot_vertical_lines(self, ax: plt.Axes, vline_x: int) -> None:
         """Plot vertical dashed lines."""
-        ax.axvline(423, color=cfg.CLR_DICT["purple"], linestyle="--", label="X1")
-        # Add more vertical lines as needed
+        ax.axvline(vline_x, color=cfg.CLR_DICT["purple"], linestyle="--")
+
+    def add_vlines(self, vlines: list) -> None:
+        """Add vertical dashed lines."""
+        self.vlines = vlines
 
