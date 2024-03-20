@@ -10,6 +10,9 @@
 
 import io
 
+import numpy as np
+import pandas as pd
+
 from matplotlib.backends.backend_pdf import PdfPages
 from matplotlib import figure as pltfg
 from reportlab.lib.pagesizes import A4
@@ -98,4 +101,18 @@ class ReportGenerator:
             pdf.savefig(self.figure)
         figure_pdf.seek(0)
         return figure_pdf
+
+    def save_pulse_width_csv(self, pulse_width: dict) -> None:
+        """Save pulse width data to CSV."""
+        csv_file = self.report_file.replace(".pdf", "-pulse-width.csv")
+
+        # Check if all lists in the dictionary have the same size
+        max_size = max(len(val) for val in pulse_width.values())
+
+        for key, val in pulse_width.items():
+            if len(val) < max_size:
+                # Pad shorter lists with NaNs
+                val.extend([np.nan] * (max_size - len(val)))
+            pulse_width[key] = val
+        pd.DataFrame(pulse_width).to_csv(csv_file)
 

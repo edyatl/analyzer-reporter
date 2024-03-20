@@ -55,6 +55,7 @@ def main() -> None:
         )
 
         generator.generate_report()
+        generator.save_pulse_width_csv(signal_proc.pulse_width)
 
 if __name__ == "__main__":
     main()
