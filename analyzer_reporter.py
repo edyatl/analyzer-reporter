@@ -47,7 +47,7 @@ def main() -> None:
     if usb_storage.ready_to_write:
         led.on()
 
-    button.wait_for_press(5)
+    button.wait_for_press()
 
     if usb_storage.ready_to_write:
         led.blink(on_time=0.25, off_time=0.25)
