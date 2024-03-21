@@ -7,6 +7,7 @@
 """
 
 # This file is part of the analyzer_reporter project
+from gpiozero import LED, Button
 
 from config import Configuration as cfg
 from logger import get_cls_logger
@@ -16,10 +17,20 @@ from signal_processor import SignalProcessor
 from signal_grapher import SignalGrapher
 from report_generator import ReportGenerator
 
+# Define GPIO pin numbers
+LED_PIN = 23
+BUTTON_PIN = 24
+
+# Initialize LED and Button objects
+led = LED(LED_PIN)
+button = Button(BUTTON_PIN)
+
 def main() -> None:
     """
     Main function
     """
+    led.blink(on_time=0.25, off_time=0.25)
+
     usb_storage = StorageController()
     print("USB Plugged:", usb_storage.usb_plugged)
     print("USB Mounted:", usb_storage.usb_mounted)
@@ -34,6 +45,13 @@ def main() -> None:
     print("Ready to Write:", usb_storage.ready_to_write)
 
     if usb_storage.ready_to_write:
+        led.on()
+
+    button.wait_for_press(5)
+
+    if usb_storage.ready_to_write:
+        led.blink(on_time=0.25, off_time=0.25)
+
         analyzer = AnalyzerController()
         df = analyzer.capture_signals()
 
@@ -58,4 +76,5 @@ def main() -> None:
         generator.save_pulse_width_csv(signal_proc.pulse_width)
 
 if __name__ == "__main__":
-    main()
+    while True:
+        main()
