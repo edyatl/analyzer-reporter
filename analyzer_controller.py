@@ -43,7 +43,7 @@ class AnalyzerController:
                 "--channels",
                 "A0=AS4_2,A1=AS4_4,A2=AS3_2,A3=AS3_4,A4=AS6_2,A5=AS6_4,A6=AS7_2,A7=AS7_4,A8=AS1_4,A9=AS2_4",
                 "--output-format",
-                "csv",
+                "csv:label=channel:header=false",
                 "--config",
                 "samplerate=1000",
                 "--samples",
