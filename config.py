@@ -24,7 +24,22 @@ class Configuration(object):
     REAL_CAPTURE = False          # Real capturing is not available yet
     EXAMPLE_DATA = "data4.csv"    # Sample data instead of real capturing
     EXAMPLE_DATA_DIR = "../"
-    
+    CAPTURE_COMMAND = [
+        "sigrok-cli",
+        "--driver",
+        "hantek-4032l",
+        "--channels",
+        "A0=AS4_2,A1=AS4_4,A2=AS3_2,A3=AS3_4,A4=AS6_2,A5=AS6_4,A6=AS7_2,A7=AS7_4,A8=AS1_4,A9=AS2_4",
+        "--output-format",
+        "csv:label=channel:header=false",
+        "--config",
+        "samplerate=1000",
+        "--samples",
+        "2048",
+    ]
+    MAX_CAPTURE_ATTEMPTS = 3
+    RETRY_DELAY_SECONDS = 2
+
     # Reporting
     ATTEMPT_POINT = (470, 767)    # XY point of attempt number in report canvas
     DATE_POINT = (470, 752)       # XY point of date in report canvas
