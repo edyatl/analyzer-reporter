@@ -41,6 +41,7 @@ def print_usb_storage_info(usb_storage: StorageController) -> None:
     print("Current PDF Report:", usb_storage.current_pdf_report)
     print("Free Space:", usb_storage.free_space)
     print("Ready to Write:", usb_storage.ready_to_write)
+    print("---------------------------------\n")
 
 def main() -> None:
     """
@@ -49,11 +50,13 @@ def main() -> None:
     led.blink(on_time=0.25, off_time=0.25)
 
     usb_storage = StorageController()
-    print_usb_storage_info(usb_storage)
 
-    while not usb_storage.ready_to_write:
-        led.blink(on_time=0.25, off_time=0.25)
-        usb_storage = StorageController()
+    if not usb_storage.ready_to_write:
+        print_usb_storage_info(usb_storage)
+
+        while not usb_storage.ready_to_write:
+            led.blink(on_time=0.25, off_time=0.25)
+            usb_storage = StorageController()
 
     print_usb_storage_info(usb_storage)
 
