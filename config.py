@@ -23,7 +23,7 @@ class Configuration(object):
 
     # Interface
     BLINK_TIME = 0.25
-    BUTTON_TIMEOUT = 15
+    BUTTON_TIMEOUT = None         # 15
 
     # Signal Processing
     FILTER_WSIZE = 15

@@ -61,7 +61,7 @@ def main() -> None:
     if not usb_storage.ready_to_write:
         wait_for_usb_storage_ready(usb_storage)
 
-    led.off() # Turn LED on because relay has vice versa logic
+    led.on() # Turn LED on because relay has vice versa logic
     print_usb_storage_info(usb_storage)
 
     button.wait_for_press(cfg.BUTTON_TIMEOUT)
