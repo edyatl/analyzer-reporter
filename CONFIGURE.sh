@@ -48,6 +48,15 @@ DEBUG=$(prompt_config_value "DEBUG" "True")
 # SHOW_GRID
 SHOW_GRID=$(prompt_config_value "SHOW_GRID" "True")
 
+# LED_PIN
+LED_PIN=$(prompt_config_value "LED_PIN" "23")
+
+# BUTTON_PIN
+BUTTON_PIN=$(prompt_config_value "BUTTON_PIN" "24")
+
+# BLINK_TIME
+BLINK_TIME=$(prompt_config_value "BLINK_TIME" "0.25")
+
 # FILTER_WSIZE
 FILTER_WSIZE=$(prompt_config_value "FILTER_WSIZE" "15")
 
@@ -55,7 +64,7 @@ FILTER_WSIZE=$(prompt_config_value "FILTER_WSIZE" "15")
 REAL_CAPTURE=$(prompt_config_value "REAL_CAPTURE" "False")
 
 # EXAMPLE_DATA
-EXAMPLE_DATA=$(prompt_config_value "EXAMPLE_DATA" "data4.csv")
+EXAMPLE_DATA=$(prompt_config_value "EXAMPLE_DATA" "data.csv")
 
 # EXAMPLE_DATA_DIR
 EXAMPLE_DATA_DIR=$(prompt_config_value "EXAMPLE_DATA_DIR" "./tpl")
@@ -116,6 +125,14 @@ class Configuration(object):
     SHOW_GRID = $SHOW_GRID              # Show grid in plots
     TIME_UNITS = "ms"
 
+    # Define GPIO pin numbers
+    LED_PIN = $LED_PIN
+    BUTTON_PIN = $BUTTON_PIN
+
+    # Interface
+    BLINK_TIME = $BLINK_TIME
+    BUTTON_TIMEOUT = None         # 15
+
     # Signal Processing
     FILTER_WSIZE = $FILTER_WSIZE
 
@@ -123,6 +140,21 @@ class Configuration(object):
     REAL_CAPTURE = $REAL_CAPTURE          # Real capturing is not available yet
     EXAMPLE_DATA = "$EXAMPLE_DATA"    # Sample data instead of real capturing
     EXAMPLE_DATA_DIR = "$EXAMPLE_DATA_DIR"
+    CAPTURE_COMMAND = [
+        "sigrok-cli",
+        "--driver",
+        "hantek-4032l",
+        "--channels",
+        "A0=AS4_2,A1=AS4_4,A2=AS3_2,A3=AS3_4,A4=AS6_2,A5=AS6_4,A6=AS7_2,A7=AS7_4,A8=AS1_4,A9=AS2_4",
+        "--output-format",
+        "csv:label=channel:header=false",
+        "--config",
+        "samplerate=1000",
+        "--samples",
+        "4096",
+    ]
+    MAX_CAPTURE_ATTEMPTS = 3
+    RETRY_DELAY_SECONDS = 2
     
     # Reporting
     ATTEMPT_POINT = (470, 767)    # XY point of attempt number in report canvas
