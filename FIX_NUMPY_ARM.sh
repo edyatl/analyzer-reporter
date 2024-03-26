@@ -47,7 +47,7 @@ activate_virtualenv() {
 
 # Step 3: Uninstall packages from virtual environment
 uninstall_packages() {
-    local packages=("numpy" "pandas" "scipy" "matplotlib")
+    local packages=("numpy" "pandas" "scipy" "matplotlib" "rpi.gpio" "gpiozero")
 
     echo "Uninstalling packages from virtual environment..."
     for package in "${packages[@]}"; do
@@ -57,7 +57,7 @@ uninstall_packages() {
 
 # Step 4: Create symbolic links from system packages to virtual environment
 create_symlinks() {
-    local packages=("numpy" "pandas" "scipy" "matplotlib" "mpl_toolkits")
+    local packages=("numpy" "pandas" "scipy" "matplotlib" "mpl_toolkits" "gpiozero" "RPi" "pigpio")
 
     echo "Creating symbolic links..."
     for package in "${packages[@]}"; do
