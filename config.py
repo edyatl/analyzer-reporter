@@ -17,6 +17,14 @@ class Configuration(object):
     SHOW_GRID = True              # Show grid in plots
     TIME_UNITS = "ms"
 
+    # Define GPIO pin numbers
+    LED_PIN = 23
+    BUTTON_PIN = 24
+
+    # Interface
+    BLINK_TIME = 0.25
+    BUTTON_TIMEOUT = 15
+
     # Signal Processing
     FILTER_WSIZE = 15
 
@@ -35,7 +43,7 @@ class Configuration(object):
         "--config",
         "samplerate=1000",
         "--samples",
-        "2048",
+        "4096",
     ]
     MAX_CAPTURE_ATTEMPTS = 3
     RETRY_DELAY_SECONDS = 2

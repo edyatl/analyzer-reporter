@@ -8,6 +8,7 @@
 
 # This file is part of the analyzer_reporter project
 import sys
+import time
 from gpiozero import LED, Button
 
 from config import Configuration as cfg
@@ -18,13 +19,10 @@ from signal_processor import SignalProcessor
 from signal_grapher import SignalGrapher
 from report_generator import ReportGenerator
 
-# Define GPIO pin numbers
-LED_PIN = 23
-BUTTON_PIN = 24
-
 # Initialize LED and Button objects
-led = LED(LED_PIN)
-button = Button(BUTTON_PIN)
+led = LED(cfg.LED_PIN)
+button = Button(cfg.BUTTON_PIN)
+
 
 def print_usb_storage_info(usb_storage: StorageController) -> None:
     """
@@ -43,51 +41,56 @@ def print_usb_storage_info(usb_storage: StorageController) -> None:
     print("Ready to Write:", usb_storage.ready_to_write)
     print("---------------------------------\n")
 
+def wait_for_usb_storage_ready(usb_storage: StorageController) -> None:
+    """
+    Wait until USB storage is ready to write.
+    """
+    led.blink(on_time=cfg.BLINK_TIME, off_time=cfg.BLINK_TIME)
+    print_usb_storage_info(usb_storage)
+    while not usb_storage.ready_to_write:
+        if usb_storage.changed and not usb_storage.ready_to_write:
+            print_usb_storage_info(usb_storage)
+        time.sleep(0.5)
+
 def main() -> None:
     """
     Main function
     """
-    led.blink(on_time=0.25, off_time=0.25)
-
     usb_storage = StorageController()
-
+    
     if not usb_storage.ready_to_write:
-        print_usb_storage_info(usb_storage)
+        wait_for_usb_storage_ready(usb_storage)
 
-        while not usb_storage.ready_to_write:
-            led.blink(on_time=0.25, off_time=0.25)
-            usb_storage = StorageController()
-
+    led.off() # Turn LED on because relay has vice versa logic
     print_usb_storage_info(usb_storage)
 
-    if usb_storage.ready_to_write:
-        led.off() # Turn LED on because relay has vice versa logic
+    button.wait_for_press(cfg.BUTTON_TIMEOUT)
+    led.blink(on_time=cfg.BLINK_TIME, off_time=cfg.BLINK_TIME)
 
-        button.wait_for_press()
+    analyzer = AnalyzerController()
+    df = analyzer.capture_signals()
+    
+    if not df.empty:
+        signal_proc = SignalProcessor(df)
+    
+        grapher = SignalGrapher(
+            filtered_signals_df = signal_proc.filtered_signals_df,
+            pulse_counts = signal_proc.pulse_count,
+            pulse_points_width = signal_proc.pulse_points_width,
+        )
+        grapher.plot_signals()
+    
+        generator = ReportGenerator(
+            figure=grapher.figure,
+            report_file = usb_storage.current_pdf_report,
+            attempt_number = usb_storage.current_pdf_report_idx,
+            capture_date = cfg.CURRENT_DATE,
+        )
 
-        led.blink(on_time=0.25, off_time=0.25)
+        if usb_storage.changed:
+            wait_for_usb_storage_ready(usb_storage)
 
-        analyzer = AnalyzerController()
-        df = analyzer.capture_signals()
-        
-        if not df.empty:
-            signal_proc = SignalProcessor(df)
-
-            grapher = SignalGrapher(
-                filtered_signals_df = signal_proc.filtered_signals_df,
-                pulse_counts = signal_proc.pulse_count,
-                pulse_points_width = signal_proc.pulse_points_width,
-            )
-
-            grapher.plot_signals()
-
-            generator = ReportGenerator(
-                figure=grapher.figure,
-                report_file = usb_storage.current_pdf_report,
-                attempt_number = usb_storage.current_pdf_report_idx,
-                capture_date = cfg.CURRENT_DATE,
-            )
-
+        if usb_storage.ready_to_write:
             generator.generate_report()
             generator.save_pulse_width_csv(signal_proc.pulse_width)
 
