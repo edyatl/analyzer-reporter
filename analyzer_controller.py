@@ -46,17 +46,18 @@ class AnalyzerController:
 
                     # Convert the output to a pandas DataFrame
                     df = pd.read_csv(io.StringIO(output_str))
+                    self.logger.debug("Buffer after sigrok-cli loaded to DataFrame: %s rows", df.shape[0])
                     return df
 
                 except subprocess.CalledProcessError as e:
                     self.logger.error("Error occurred while capturing signals: %s", str(e))
-                    self.logger.info("Attempting to capture signals again (Attempt %d/%d)",
+                    self.logger.debug("Attempting to capture signals again (Attempt %d/%d)",
                                      attempt, cfg.MAX_CAPTURE_ATTEMPTS)
                     time.sleep(cfg.RETRY_DELAY_SECONDS)
 
                 except pd.errors.ParserError as e:
                     self.logger.error("Error occurred while parsing output: %s", str(e))
-                    self.logger.info("Attempting to capture signals again (Attempt %d/%d)",
+                    self.logger.debug("Attempting to capture signals again (Attempt %d/%d)",
                                      attempt, cfg.MAX_CAPTURE_ATTEMPTS)
                     time.sleep(cfg.RETRY_DELAY_SECONDS)
 

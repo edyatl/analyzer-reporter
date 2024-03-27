@@ -24,7 +24,7 @@ def get_cls_logger(cls: str) -> object:
     if not logger.handlers:
         handler = logging.FileHandler(cfg.LOG_FILE)
         formatter = logging.Formatter(
-            "%(asctime)s %(name)-16s [%(levelname)s] %(message)s", "%Y-%m-%d %H:%M:%S"
+            "%(asctime)s %(name)-20s [%(levelname)s] %(message)s", "%Y-%m-%d %H:%M:%S"
         )
         handler.setFormatter(formatter)
         logger.addHandler(handler)
