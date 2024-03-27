@@ -1,0 +1,14 @@
+[Unit]
+Description=Analyzer Reporter Service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/home/operator/venv/bin/python3 /home/operator/analyzer-reporter/analyzer_reporter.py
+StandardOutput=null
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+Alias=analyzer.service
+
