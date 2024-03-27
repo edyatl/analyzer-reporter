@@ -4,8 +4,8 @@ After=network.target
 
 [Service]
 Type=simple
+WorkingDirectory=/home/operator/analyzer-reporter
 ExecStart=/home/operator/venv/bin/python3 /home/operator/analyzer-reporter/analyzer_reporter.py
-StandardOutput=null
 Restart=on-failure
 
 [Install]
