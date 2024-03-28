@@ -19,7 +19,7 @@ class StorageController:
     logger = get_cls_logger(__qualname__)
 
     def __init__(self):
-        self.logger.debug("Make an instance of %s class", self.__class__.__name__)
+        self.logger.debug("Initialized %s", self.__class__.__name__)
         self.update()
 
     @staticmethod

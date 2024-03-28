@@ -33,7 +33,7 @@ class SignalProcessor:
         # Calculate pulse count and pulse width for each signal
         self.pulse_count, self.pulse_points_width = self._calculate_pulse_metrics()
 
-        self.logger.debug("Make an instance of %s class", self.__class__.__name__)
+        self.logger.debug("Initialized %s", self.__class__.__name__)
 
     def _filter_noise(self) -> pd.DataFrame:
         """Filter noise for each signal."""

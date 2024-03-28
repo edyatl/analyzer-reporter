@@ -40,7 +40,7 @@ class SignalGrapher:
         self.figure: pltfg.Figure = None
         self.vlines: list = []
 
-        self.logger.debug("Make an instance of %s class", self.__class__.__name__)
+        self.logger.debug("Initialized %s", self.__class__.__name__)
 
     def plot_signals(self) -> None:
         """Plot signals and pulses."""

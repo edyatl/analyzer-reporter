@@ -50,8 +50,15 @@ class ReportGenerator:
     def _load_template(self) -> io.BytesIO:
         """Load PDF template."""
         template = io.BytesIO()
-        with open(cfg.TEMPLATE_FILE, "rb") as f:
-            template.write(f.read())
+        try:
+            with open(cfg.TEMPLATE_FILE, "rb") as f:
+                template.write(f.read())
+            self.logger.debug("Template loaded from %s", cfg.TEMPLATE_FILE)
+        except FileNotFoundError:
+            c = canvas.Canvas(template, pagesize=A4)
+            c.showPage()
+            c.save()
+            self.logger.warning("Template file %s not found, using blank A4 canvas", cfg.TEMPLATE_FILE)
         template.seek(0)
         return template
 

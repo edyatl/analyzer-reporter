@@ -26,6 +26,7 @@ button = Button(cfg.BUTTON_PIN)
 
 # Logger initialization
 logger = get_cls_logger(__name__)
+logger.info("Starting Analyzer and Reporter")
 
 # Function SIGTERM handler for graceful termination
 def sigterm_handler(signal, frame):
@@ -66,6 +67,13 @@ def print_usb_storage_info(usb_storage: StorageController) -> None:
     print("Ready to Write:", usb_storage.ready_to_write)
     print("---------------------------------\n")
 
+def log_analyzer_controller_info(analyzer_controller: AnalyzerController) -> None:
+    """
+    Log information about analyzer controller.
+    """
+    analyzer_controller.logger.debug("Real Capture: %s", analyzer_controller.real_capture)
+    analyzer_controller.logger.debug("Data Path: %s", analyzer_controller.data_path)
+
 def wait_for_usb_storage_ready(usb_storage: StorageController) -> None:
     """
     Wait until USB storage is ready to write.
@@ -96,13 +104,16 @@ def main() -> None:
         print_usb_storage_info(usb_storage)
 
     button.wait_for_press(cfg.BUTTON_TIMEOUT)
+    logger.debug("Button pressed!")
     led.blink(on_time=cfg.BLINK_TIME, off_time=cfg.BLINK_TIME)
 
     analyzer = AnalyzerController()
     df = analyzer.capture_signals()
+    log_analyzer_controller_info(analyzer)
     
     if not df.empty:
         signal_proc = SignalProcessor(df)
+        signal_proc.logger.debug("Data processed and loaded to DataFrame: %s rows", df.shape[0])
     
         grapher = SignalGrapher(
             filtered_signals_df = signal_proc.filtered_signals_df,
@@ -110,6 +121,7 @@ def main() -> None:
             pulse_points_width = signal_proc.pulse_points_width,
         )
         grapher.plot_signals()
+        grapher.logger.debug("Signals and pulses plotted")
     
         generator = ReportGenerator(
             figure=grapher.figure,
@@ -124,6 +136,7 @@ def main() -> None:
         if usb_storage.ready_to_write:
             generator.generate_report()
             generator.save_pulse_width_csv(signal_proc.pulse_width)
+            generator.logger.debug("Report file %s saved.", generator.report_file)
 
 if __name__ == "__main__":
     signal.signal(signal.SIGTERM, sigterm_handler)

@@ -27,7 +27,7 @@ class AnalyzerController:
             os.path.abspath(cfg.EXAMPLE_DATA_DIR), cfg.EXAMPLE_DATA
         )
 
-        self.logger.debug("Make an instance of %s class", self.__class__.__name__)
+        self.logger.debug("Initialized %s", self.__class__.__name__)
 
     def capture_signals(self) -> pd.DataFrame:
         """
