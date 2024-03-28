@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
     Developed by @edyatl <edyatl@yandex.ru> March 2024
     https://github.com/edyatl

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
     Developed by @edyatl <edyatl@yandex.ru> March 2024
     https://github.com/edyatl
@@ -10,11 +10,13 @@
 
 import os
 import io
+import time
 import subprocess
 import pandas as pd
 
 from config import Configuration as cfg
 from logger import get_cls_logger
+
 
 class AnalyzerController:
     """Class to control Hantek 4032L logic analyzer"""
@@ -40,36 +42,49 @@ class AnalyzerController:
                 try:
                     # Perform real capturing using sigrok-cli and store the output in a buffer
                     command = cfg.CAPTURE_COMMAND
-                    process = subprocess.Popen(command, stdout=subprocess.PIPE)
-                    output, _ = process.communicate()
-                    output_str = output.decode("utf-8")
+                    with subprocess.Popen(command, stdout=subprocess.PIPE) as process:
+                        output, _ = process.communicate()
+                        output_str = output.decode("utf-8")
 
                     # Convert the output to a pandas DataFrame
                     df = pd.read_csv(io.StringIO(output_str))
-                    self.logger.debug("Buffer after sigrok-cli loaded to DataFrame: %s rows", df.shape[0])
+                    self.logger.debug(
+                        "Buffer after sigrok-cli loaded to DataFrame: %s rows",
+                        df.shape[0],
+                    )
                     return df
 
                 except subprocess.CalledProcessError as e:
-                    self.logger.error("Error occurred while capturing signals: %s", str(e))
-                    self.logger.debug("Attempting to capture signals again (Attempt %d/%d)",
-                                     attempt, cfg.MAX_CAPTURE_ATTEMPTS)
+                    self.logger.error(
+                        "Error occurred while capturing signals: %s", str(e)
+                    )
+                    self.logger.debug(
+                        "Attempting to capture signals again (Attempt %d/%d)",
+                        attempt,
+                        cfg.MAX_CAPTURE_ATTEMPTS,
+                    )
                     time.sleep(cfg.RETRY_DELAY_SECONDS)
 
                 except pd.errors.ParserError as e:
                     self.logger.error("Error occurred while parsing output: %s", str(e))
-                    self.logger.debug("Attempting to capture signals again (Attempt %d/%d)",
-                                     attempt, cfg.MAX_CAPTURE_ATTEMPTS)
+                    self.logger.debug(
+                        "Attempting to capture signals again (Attempt %d/%d)",
+                        attempt,
+                        cfg.MAX_CAPTURE_ATTEMPTS,
+                    )
                     time.sleep(cfg.RETRY_DELAY_SECONDS)
 
-            self.logger.error("Failed to capture signals after %d attempts", cfg.MAX_CAPTURE_ATTEMPTS)
+            self.logger.error(
+                "Failed to capture signals after %d attempts", cfg.MAX_CAPTURE_ATTEMPTS
+            )
             return pd.DataFrame()
-        else:
-            # Try to load sample data from file and if error on parse or file not found, return empty DataFrame
-            try:
-                df = pd.read_csv(self.data_path)
-                self.logger.debug("Data loaded from file: %s", self.data_path)
-                return df
-            except (pd.errors.ParserError, FileNotFoundError) as e:
-                self.logger.error("Error occurred while loading sample data: %s", str(e))
-                return pd.DataFrame()
-
+        # Try to load sample data from file and if error return empty DataFrame
+        try:
+            df = pd.read_csv(self.data_path)
+            self.logger.debug("Data loaded from file: %s", self.data_path)
+            return df
+        except (pd.errors.ParserError, FileNotFoundError) as e:
+            self.logger.error(
+                "Error occurred while loading sample data: %s", str(e)
+            )
+            return pd.DataFrame()

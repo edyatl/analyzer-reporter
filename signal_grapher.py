@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
     Developed by @edyatl <edyatl@yandex.ru> March 2024
     https://github.com/edyatl
@@ -15,6 +15,7 @@ from matplotlib import figure as pltfg
 
 from config import Configuration as cfg
 from logger import get_cls_logger
+
 
 class SignalGrapher:
     """Class to plot signals on a matplotlib figure."""
@@ -91,7 +92,7 @@ class SignalGrapher:
             "",
             xy=(x1, 0.5),
             xytext=(x2, 0.5),
-            arrowprops=dict(arrowstyle="<->", color=cfg.CLR_DICT["gray"]),
+            arrowprops={"arrowstyle": "<->", "color": cfg.CLR_DICT["gray"]},
         )
         ax.text(
             (x1 + x2) / 2, 0.6, f"{width} ms", ha="center", color=cfg.CLR_DICT["gray"]
@@ -104,4 +105,3 @@ class SignalGrapher:
     def add_vlines(self, vlines: list) -> None:
         """Add vertical dashed lines."""
         self.vlines = vlines
-

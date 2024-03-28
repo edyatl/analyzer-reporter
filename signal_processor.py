@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
     Developed by @edyatl <edyatl@yandex.ru> March 2024
     https://github.com/edyatl
@@ -15,6 +15,7 @@ from scipy import signal
 
 from config import Configuration as cfg
 from logger import get_cls_logger
+
 
 class SignalProcessor:
     """Class to process signals"""
@@ -66,13 +67,22 @@ class SignalProcessor:
     @staticmethod
     def _signal_pulse_count(ser: pd.Series) -> int:
         """Function to calculate number of pulses."""
-        return len(np.atleast_1d(ser).nonzero()[0]) // 2
+        count = 0
+        start_indices = np.where(np.atleast_1d(ser) == 1)[0]
+        for start_idx in start_indices:
+            # Find the index where the sequence ends with -1, with 0s in between
+            end_idx = np.where(np.atleast_1d(ser)[start_idx:] == -1)[0]
+            if len(end_idx) > 0:
+                count += 1
+        return count
 
     @staticmethod
     def _signal_pulse_width(ser: pd.Series, n: int) -> tuple:
         """Function to calculate pulse width."""
         n = n << 1
         ser_nonzero = np.atleast_1d(ser).nonzero()[0]
+        if ser[ser_nonzero[n]] < 0:
+            n += 1
         return ser_nonzero[n], ser_nonzero[n + 1], ser_nonzero[n + 1] - ser_nonzero[n]
 
     @property
@@ -88,4 +98,3 @@ class SignalProcessor:
         return {
             k: list(map(lambda x: x[2], v)) for k, v in self.pulse_points_width.items()
         }
-

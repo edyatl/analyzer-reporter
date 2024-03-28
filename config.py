@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
     Developed by @edyatl <edyatl@yandex.ru> March 2024
     https://github.com/edyatl
@@ -9,12 +9,14 @@ import os
 from datetime import datetime
 
 
-class Configuration(object):
+class Configuration():
+    """Configuration class"""
+
     # Debugging
     DEBUG = True
 
     # Plotting
-    SHOW_GRID = True              # Show grid in plots
+    SHOW_GRID = True  # Show grid in plots
     TIME_UNITS = "ms"
 
     # Define GPIO pin numbers
@@ -23,14 +25,14 @@ class Configuration(object):
 
     # Interface
     BLINK_TIME = 0.25
-    BUTTON_TIMEOUT = 15         # 15
+    BUTTON_TIMEOUT = 15  # 15
 
     # Signal Processing
     FILTER_WSIZE = 15
 
     # Data Capture
-    REAL_CAPTURE = False          # Real capturing is not available yet
-    EXAMPLE_DATA = "data4.csv"    # Sample data instead of real capturing
+    REAL_CAPTURE = False  # Real capturing is not available yet
+    EXAMPLE_DATA = "data4.csv"  # Sample data instead of real capturing
     EXAMPLE_DATA_DIR = "../"
     CAPTURE_COMMAND = [
         "sigrok-cli",
@@ -49,20 +51,20 @@ class Configuration(object):
     RETRY_DELAY_SECONDS = 2
 
     # Reporting
-    ATTEMPT_POINT = (470, 767)    # XY point of attempt number in report canvas
-    DATE_POINT = (470, 752)       # XY point of date in report canvas
+    ATTEMPT_POINT = (470, 767)  # XY point of attempt number in report canvas
+    DATE_POINT = (470, 752)  # XY point of date in report canvas
     CURRENT_DATE = datetime.now().strftime("%Y-%m-%d")
 
     # USB Storage
-    USB_DEVICE = "sdb"            # Change it to sda on Raspberry Pi
+    USB_DEVICE = "sdb"  # Change it to sda on Raspberry Pi
     USB_PART = USB_DEVICE + "1"
     USB_DRIVE = os.path.join("/dev", USB_PART)
-    WRITE_TRESHOLD = 100000       # 100KB
+    WRITE_TRESHOLD = 100000  # 100KB
 
     # Paths and Files
     DATA_DIR_NAME = "data"
     IDX_STR = "{IDX}"
-    REPORT_NAME = f'{CURRENT_DATE}-{IDX_STR}.pdf'
+    REPORT_NAME = f"{CURRENT_DATE}-{IDX_STR}.pdf"
     TEMPLATE_FILE = os.path.join(os.path.abspath("../"), "template2.pdf")
     LOG_FILE = os.path.join(os.path.dirname(__file__), "analyzer_reporter.log")
 
@@ -94,4 +96,3 @@ class Configuration(object):
         "gray",
     ]
     CLR_DICT = dict(zip(CLR_NAMES, COLORS))
-

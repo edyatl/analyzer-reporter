@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
     Developed by @edyatl <edyatl@yandex.ru> March 2024
     https://github.com/edyatl
@@ -12,6 +12,7 @@ import os
 
 from config import Configuration as cfg
 from logger import get_cls_logger
+
 
 class StorageController:
     """Class to control USB storage"""
@@ -29,7 +30,7 @@ class StorageController:
 
     def get_mount_point(self) -> None:
         """Get the mount point of the USB drive."""
-        with open("/proc/mounts") as mounts:
+        with open("/proc/mounts", "r", encoding="utf-8") as mounts:
             for line in mounts:
                 if cfg.USB_DRIVE in line:
                     self.usb_mounted = True
@@ -126,4 +127,3 @@ class StorageController:
             or previous_usb_mounted != self.usb_mounted
             or previous_ready_to_write != self.ready_to_write
         )
-

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
     Developed by @edyatl <edyatl@yandex.ru> March 2024
     https://github.com/edyatl
@@ -22,6 +22,7 @@ from pypdf import PdfReader, PdfWriter
 
 from config import Configuration as cfg
 from logger import get_cls_logger
+
 
 class ReportGenerator:
     """Class to generate PDF report."""
@@ -58,7 +59,9 @@ class ReportGenerator:
             c = canvas.Canvas(template, pagesize=A4)
             c.showPage()
             c.save()
-            self.logger.warning("Template file %s not found, using blank A4 canvas", cfg.TEMPLATE_FILE)
+            self.logger.warning(
+                "Template file %s not found, using blank A4 canvas", cfg.TEMPLATE_FILE
+            )
         template.seek(0)
         return template
 
@@ -122,4 +125,3 @@ class ReportGenerator:
                 val.extend([np.nan] * (max_size - len(val)))
             pulse_width[key] = val
         pd.DataFrame(pulse_width).to_csv(csv_file)
-

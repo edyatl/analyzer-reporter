@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
     Developed by @edyatl <edyatl@yandex.ru> March 2024
     https://github.com/edyatl
@@ -28,11 +28,15 @@ button = Button(cfg.BUTTON_PIN)
 logger = get_cls_logger(__name__)
 logger.info("Starting Analyzer and Reporter")
 
-# Function SIGTERM handler for graceful termination
-def sigterm_handler(signal, frame):
+
+def sigterm_handler(sig, frame):
+    """
+    SIGTERM handler for graceful termination
+    """
     logger.info("Received SIGTERM. Exiting...")
     led.off()
     sys.exit(0)
+
 
 def log_usb_storage_info(usb_storage: StorageController) -> None:
     """
@@ -44,11 +48,16 @@ def log_usb_storage_info(usb_storage: StorageController) -> None:
     usb_storage.logger.debug("Data Directory: %s", usb_storage.data_dir)
     usb_storage.logger.debug("PDF Files: %s", usb_storage.pdf_files)
     usb_storage.logger.debug("Last PDF Report: %s", usb_storage.last_pdf_report)
-    usb_storage.logger.debug("Last PDF Report date: %s", usb_storage.last_pdf_report_date)
-    usb_storage.logger.debug("Last PDF Report index: %s", usb_storage.last_pdf_report_idx)
+    usb_storage.logger.debug(
+        "Last PDF Report date: %s", usb_storage.last_pdf_report_date
+    )
+    usb_storage.logger.debug(
+        "Last PDF Report index: %s", usb_storage.last_pdf_report_idx
+    )
     usb_storage.logger.debug("Current PDF Report: %s", usb_storage.current_pdf_report)
     usb_storage.logger.debug("Free Space: %s", usb_storage.free_space)
     usb_storage.logger.debug("Ready to Write: %s", usb_storage.ready_to_write)
+
 
 def print_usb_storage_info(usb_storage: StorageController) -> None:
     """
@@ -67,12 +76,16 @@ def print_usb_storage_info(usb_storage: StorageController) -> None:
     print("Ready to Write:", usb_storage.ready_to_write)
     print("---------------------------------\n")
 
+
 def log_analyzer_controller_info(analyzer_controller: AnalyzerController) -> None:
     """
     Log information about analyzer controller.
     """
-    analyzer_controller.logger.debug("Real Capture: %s", analyzer_controller.real_capture)
+    analyzer_controller.logger.debug(
+        "Real Capture: %s", analyzer_controller.real_capture
+    )
     analyzer_controller.logger.debug("Data Path: %s", analyzer_controller.data_path)
+
 
 def wait_for_usb_storage_ready(usb_storage: StorageController) -> None:
     """
@@ -89,16 +102,17 @@ def wait_for_usb_storage_ready(usb_storage: StorageController) -> None:
                 print_usb_storage_info(usb_storage)
         time.sleep(0.5)
 
+
 def main() -> None:
     """
     Main function
     """
     usb_storage = StorageController()
-    
+
     if not usb_storage.ready_to_write:
         wait_for_usb_storage_ready(usb_storage)
 
-    led.on() # Turn LED on because relay has vice versa logic
+    led.on()  # Turn LED on because relay has vice versa logic
     log_usb_storage_info(usb_storage)
     if cfg.DEBUG:
         print_usb_storage_info(usb_storage)
@@ -110,24 +124,26 @@ def main() -> None:
     analyzer = AnalyzerController()
     df = analyzer.capture_signals()
     log_analyzer_controller_info(analyzer)
-    
+
     if not df.empty:
         signal_proc = SignalProcessor(df)
-        signal_proc.logger.debug("Data processed and loaded to DataFrame: %s rows", df.shape[0])
-    
+        signal_proc.logger.debug(
+            "Data processed and loaded to DataFrame: %s rows", df.shape[0]
+        )
+
         grapher = SignalGrapher(
-            filtered_signals_df = signal_proc.filtered_signals_df,
-            pulse_counts = signal_proc.pulse_count,
-            pulse_points_width = signal_proc.pulse_points_width,
+            filtered_signals_df=signal_proc.filtered_signals_df,
+            pulse_counts=signal_proc.pulse_count,
+            pulse_points_width=signal_proc.pulse_points_width,
         )
         grapher.plot_signals()
         grapher.logger.debug("Signals and pulses plotted")
-    
+
         generator = ReportGenerator(
             figure=grapher.figure,
-            report_file = usb_storage.current_pdf_report,
-            attempt_number = usb_storage.current_pdf_report_idx,
-            capture_date = cfg.CURRENT_DATE,
+            report_file=usb_storage.current_pdf_report,
+            attempt_number=usb_storage.current_pdf_report_idx,
+            capture_date=cfg.CURRENT_DATE,
         )
 
         if usb_storage.changed:
@@ -137,6 +153,7 @@ def main() -> None:
             generator.generate_report()
             generator.save_pulse_width_csv(signal_proc.pulse_width)
             generator.logger.debug("Report file %s saved.", generator.report_file)
+
 
 if __name__ == "__main__":
     signal.signal(signal.SIGTERM, sigterm_handler)
