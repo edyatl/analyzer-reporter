@@ -117,7 +117,9 @@ import os
 from datetime import datetime
 
 
-class Configuration(object):
+class Configuration():
+    """Configuration class"""
+
     # Debugging
     DEBUG = $DEBUG
 
