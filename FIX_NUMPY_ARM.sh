@@ -42,7 +42,7 @@ check_symlinks() {
 install_system_packages() {
     echo "Installing system packages..."
     sudo apt-get update || { echo "Can't update package list"; exit 1; }
-    sudo apt-get install -y python3-numpy python3-pandas python3-scipy python3-matplotlib python3-rpi.gpio python3-gpiozero || { echo "Can't install packages"; exit 1; }
+    sudo apt-get install -y python3-numpy python3-pandas python3-scipy python3-matplotlib python3-gpiozero || { echo "Can't install packages"; exit 1; }
 }
 
 # Step 2: Activate virtual environment

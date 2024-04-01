@@ -22,10 +22,102 @@ This Python program turns your Raspberry Pi into a logic analyzer using the Hant
 
 ## Installation
 
+Follow these steps to install and configure the **analyzer-reporter** Python application on your system.
+
+#### Step 1: Clone the Repository
+
+Clone the **analyzer-reporter** repository from GitHub and navigate to the project directory:
+
+```bash
+git clone https://github.com/edyatl/analyzer-reporter.git
+cd analyzer-reporter
+```
+
+#### Step 2: Run the Installation Script
+
+Execute the `INSTALL.sh` script to set up the virtual environment and install the required Python packages:
+
+```bash
+bash INSTALL.sh
+```
+
+This script will create a virtual environment, activate it, and install all necessary dependencies specified in the `requirements.txt` file. Follow the prompts to configure the application settings.
+
+#### Step 3: Provide Configuration Values
+
+The installation script will prompt you to provide configuration values for various options. You can either accept the default values or enter custom values as per your requirements.
+
+#### Step 4: Prepare Example Data and Template
+
+Copy the example data file `data.csv` and the template PDF file `template.pdf` to the `tpl/` directory created during the configuration step.
+
+```bash
+cp /path/to/data.csv tpl/
+cp /path/to/template.pdf tpl/
+```
+
+If you don't have a template PDF file, the application will use a blank A4 page as the template.
+
+#### Step 5: Fix NumPy Issue (If Required)
+
+If you are using a Raspberry Pi or ARM platform, execute the `FIX_NUMPY_ARM.sh` script to fix any issues with NumPy:
+
+```bash
+bash FIX_NUMPY_ARM.sh
+```
+
+#### Step 6: Activate Virtual Environment
+
+Activate the virtual environment before running the application:
+
+```bash
+source ../venv/bin/activate
+```
+
+#### Step 7: Test the Application
+
+Test the application to ensure everything is working correctly. If you are not using a Raspberry Pi, run the following command with GPIO mock:
+
+```bash
+GPIOZERO_PIN_FACTORY=mock python analyzer_reporter.py
+```
+
+If you are using a Raspberry Pi, run the application without GPIO mocking:
+
+```bash
+python analyzer_reporter.py
+```
+
+Press `Ctrl + C` to exit the application.
+
+#### Step 8: Install as Systemd Service (Optional)
+
+To install the **analyzer-reporter** application as a systemd service for automatic startup, run the following script:
+
+```bash
+sudo bash INSTALL_AS_SERVICE.sh
+```
+
+This script will copy the service unit file to `/etc/systemd/system/` and start the service. The application will now run in the background as a service.
+
+#### Step 9: Verify Installation
+
+Check the status of the installed service to ensure it's running without any errors:
+
+```bash
+sudo systemctl status analyzer.service
+```
+
+If the service is active and running, the installation process is complete.
+
+You have successfully installed and configured the **analyzer-reporter** Python application on your system. You can now use it to capture, process, and generate reports for your analyzer data.
+
+
+#### Step 10: Connect hardware
+
 1. Connect the Hantek 4032L logic analyzer to your Raspberry Pi.
 2. Install Sigrok software on your Raspberry Pi.
 3. Connect the physical button and LED lamp to the GPIO pins of your Raspberry Pi.
-4. Clone this GitHub repository to your Raspberry Pi.
 
 ## Usage
 
