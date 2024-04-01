@@ -7,14 +7,20 @@
 
 # 1. Install System Packages: The script updates the package list and 
 # installs the required system packages (python3-numpy, python3-pandas, 
-# python3-scipy, python3-matplotlib) from the Debian repositories using apt-get.
+# python3-scipy, python3-matplotlib, python3-rpi.gpio, python3-gpiozero) 
+# from the Debian repositories using apt-get.
 
-# 2. Uninstall Packages from Virtual Environment: The script uninstalls the NumPy, 
-# Pandas, SciPy, and Matplotlib packages from the virtual environment using pip uninstall.
+# 2. Activate Virtual Environment: The script activates the virtual environment 
+# where the Python packages are installed.
 
-# 3. Create Symbolic Links: It creates symbolic links from the system-installed packages 
-# (python3-numpy, python3-pandas, python3-scipy, python3-matplotlib, mpl_toolkits) 
-# into the virtual environment's site-packages directory using the ln command.
+# 3. Uninstall Packages from Virtual Environment: The script uninstalls the NumPy, 
+# Pandas, SciPy, Matplotlib, RPi.GPIO, and gpiozero packages from the virtual 
+# environment using pip uninstall.
+
+# 4. Create Symbolic Links: It creates symbolic links from the system-installed 
+# packages (python3-numpy, python3-pandas, python3-scipy, python3-matplotlib, 
+# python3-rpi.gpio, python3-gpiozero) into the virtual environment's site-packages 
+# directory using the ln command.
 
 set -e
 
@@ -36,7 +42,7 @@ check_symlinks() {
 install_system_packages() {
     echo "Installing system packages..."
     sudo apt-get update || { echo "Can't update package list"; exit 1; }
-    sudo apt-get install -y python3-numpy python3-pandas python3-scipy python3-matplotlib || { echo "Can't install packages"; exit 1; }
+    sudo apt-get install -y python3-numpy python3-pandas python3-scipy python3-matplotlib python3-rpi.gpio python3-gpiozero || { echo "Can't install packages"; exit 1; }
 }
 
 # Step 2: Activate virtual environment

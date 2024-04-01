@@ -5,21 +5,21 @@ set -e
 # Check if virtualenv is installed, install if not
 if ! command -v virtualenv &> /dev/null; then
     echo "Installing virtualenv..."
-    sudo apt-get update
-    sudo apt-get install -y virtualenv
+    sudo apt-get update || { echo "Can't update package list"; exit 1; }
+    sudo apt-get install -y virtualenv || { echo "Can't install virtualenv"; exit 1; }
 fi
 
 # Create virtual environment
 echo "Creating virtual environment..."
-virtualenv -p python3 ../venv
+virtualenv -p python3 ../venv || { echo "Can't create virtual environment"; exit 1; }
 
 # Activate virtual environment
 echo "Activating virtual environment..."
-source ../venv/bin/activate
+source ../venv/bin/activate || { echo "Can't activate virtual environment"; exit 1; }
 
 # Install required packages
 echo "Installing required packages..."
-pip install -r requirements.txt
+pip install -r requirements.txt || { echo "Can't install packages"; exit 1; }
 
 # Check if installation was successful
 if [ $? -eq 0 ]; then
