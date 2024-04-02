@@ -16,7 +16,7 @@ This Python program turns your Raspberry Pi into a logic analyzer using the [Han
 - Hantek 4032L USB-based 32-channel logic analyzer
 - Sigrok software
 - Python 3.x
-- Required Python packages: numpy, matplotlib, scipy
+- Required Python packages: numpy, pandas, matplotlib, scipy, reportlab, pypdf, RPi.GPIO, gpiozero
 - Physical button and LED lamp connected to Raspberry Pi GPIO pins
 - USB flash drive
 
