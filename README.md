@@ -20,6 +20,62 @@ This Python program turns your Raspberry Pi into a logic analyzer using the Hant
 - Physical button and LED lamp connected to Raspberry Pi GPIO pins
 - USB flash drive
 
+## Files Description
+
+```
+.
+├── CONFIGURE.sh
+├── FIX_NUMPY_ARM.sh
+├── INSTALL.sh
+├── INSTALL_AS_SERVICE.sh
+├── __init__.py
+├── analyzer_controller.py
+├── analyzer_reporter.py
+├── analyzer_reporter.service
+├── analyzer_report.ipynb
+├── config.py
+├── logger.py
+├── report_generator.py
+├── requirements.txt
+├── signal_grapher.py
+├── signal_processor.py
+└── storage_controller.py
+
+```
+
+- **[CONFIGURE.sh](CONFIGURE.sh)**: Bash script used to configure the application settings interactively.
+  
+- **[FIX_NUMPY_ARM.sh](FIX_NUMPY_ARM.sh)**: Bash script to fix issues with NumPy on ARM platforms, such as Raspberry Pi.
+
+- **[INSTALL.sh](INSTALL.sh)**: Bash script for installing the application and its dependencies.
+
+- **[INSTALL_AS_SERVICE.sh](INSTALL_AS_SERVICE.sh)**: Bash script to install the application as a systemd service for automatic startup.
+
+- **[\_\_init\_\_.py](__init__.py)**: Initialization file for the Python package.
+
+- **[analyzer_controller.py](analyzer_controller.py)**: Python module containing the AnalyzerController class for capturing signals from an analyzer.
+
+- **[analyzer_report.ipynb](analyzer_report.ipynb)**: Jupyter Notebook file with examples and documentation for the **analyzer-reporter** application.
+
+- **[analyzer_reporter.py](analyzer_reporter.py)**: Main Python script for running the **analyzer-reporter** application.
+
+- **[analyzer_reporter.service](analyzer_reporter.service)**: Systemd service unit file for running the application as a background service.
+
+- **[config.py](config.py)**: Python module containing the Configuration class with application settings and configurations.
+
+- **[logger.py](logger.py)**: Python module for logging messages and events during application execution.
+
+- **[report_generator.py](report_generator.py)**: Python module for generating reports based on captured signals.
+
+- **[requirements.txt](requirements.txt)**: Text file listing the Python packages required by the application.
+
+- **[signal_grapher.py](signal_grapher.py)**: Python module for plotting and visualizing signal data.
+
+- **[signal_processor.py](signal_processor.py)**: Python module for processing and analyzing captured signals.
+
+- **[storage_controller.py](storage_controller.py)**: Python module for managing storage devices and data directories.
+
+
 ## Installation
 
 Follow these steps to install and configure the **analyzer-reporter** Python application on your system.
