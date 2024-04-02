@@ -1,4 +1,4 @@
-# analyzer-reporter - Python Logic Analyzer with Sigrok
+# analyzer-reporter - Python Logic Analyzer
 
 This Python program turns your Raspberry Pi into a logic analyzer using the [Hantek 4032L](https://sigrok.org/wiki/Hantek_4032L) USB-based 32-channel logic analyzer and [Sigrok software](https://sigrok.org/wiki/Main_Page). It allows you to capture signals, filter noise, measure pulse widths, plot signals, and save reports as PDF files on a USB flash drive.
 
@@ -146,6 +146,8 @@ python analyzer_reporter.py
 
 Press `Ctrl + C` to exit the application.
 
+>**Note:** When testing the application, it's recommended to start with the `DEBUG` mode enabled (`DEBUG=True`) and `REAL_CAPTURE` set to `False`. This configuration allows for verbose logging and detailed output, which can be helpful for identifying any issues during testing. Once the application functions correctly with example data and mock GPIO interactions, users can switch `REAL_CAPTURE` to `True` to enable real signal capturing. Finally, set `DEBUG=False` to reduce verbose logging and standard output once real capturing is verified.
+
 #### Step 8: Install as Systemd Service (Optional)
 
 To install the **analyzer-reporter** application as a systemd service for automatic startup, run the following script:
@@ -182,6 +184,11 @@ You have successfully installed and configured the **analyzer-reporter** Python 
 3. LED lamp will blink to indicate capturing or waiting for storage modes of the program. 
 4. LED lamp will on to indicate waiting for button press mode.
 5. Reports will be saved as PDF files on the USB flash drive with the current date and index of the attempt.
+
+>**Notes:**
+>- **Familiarize with the Jupyter Notebook**: Before using the analyzer-reporter application, we strongly encourage users to familiarize themselves with the [analyzer_report.ipynb](analyzer_report.ipynb) Jupyter Notebook file. This notebook provides detailed descriptions of all application classes, examples of their usage, generated graphs, and the general logic of the application. It serves as a comprehensive guide to understanding the functionality and capabilities of the analyzer-reporter.
+>- **Customize for Different Devices**: Although the analyzer-reporter application is designed to interact with the Hantek 4032L logic analyzer by default, it can easily be modified to work with other devices supported by Sigrok. To do this, users can edit the configuration file and specify the desired driver and parameters for the `sigrok-cli` command. This flexibility allows users to adapt the application to their specific hardware requirements and preferences.
+>- **Versatile Use Cases**: While the application was initially designed to run as a service on Raspberry Pi, it can also be used on a PC without modification. Additionally, individual modules of the application classes can be utilized independently for specific tasks or integrated into other projects. Users can modify the entry point of the application to customize its behavior or integrate it into their existing workflows as needed.
 
 ## Configuration
 
@@ -239,6 +246,20 @@ The analyzer-reporter application can be configured to suit your specific requir
 - **CLR_NAMES**: List of color names for reference.
 - **CLR_DICT**: Dictionary mapping color names to color codes.
 
+## Useful Sigrok Links
+
+Sigrok is a powerful open-source signal analysis software suite that supports various hardware devices for capturing, decoding, and analyzing signals. Below are some useful links related to Sigrok:
+
+- **Official Sigrok Website**: [sigrok.org](https://sigrok.org/)
+  - The official website of Sigrok provides comprehensive documentation, downloads, and resources for users interested in using Sigrok for signal analysis.
+
+- **Supported Devices**: [sigrok.org/wiki/Supported_hardware](https://sigrok.org/wiki/Supported_hardware)
+  - This page lists the hardware devices supported by Sigrok, including oscilloscopes, logic analyzers, multimeters, and more. You can check if your device is compatible with Sigrok here.
+
+- **Download Sigrok**: [sigrok.org/downloads/](https://sigrok.org/downloads/)
+  - Visit this page to download the latest version of the Sigrok software suite for your operating system. Sigrok is available for various platforms, including Linux, Windows, and macOS.
+
+These links provide valuable resources for learning more about Sigrok, troubleshooting issues, and connecting with the Sigrok community. Whether you're a beginner or an experienced user, Sigrok offers a wide range of tools and support for your signal analysis needs.
 
 ## Contributing
 
