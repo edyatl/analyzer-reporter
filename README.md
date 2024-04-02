@@ -1,6 +1,6 @@
-# Python Logic Analyzer with Sigrok
+# analyzer-reporter - Python Logic Analyzer with Sigrok
 
-This Python program turns your Raspberry Pi into a logic analyzer using the Hantek 4032L USB-based 32-channel logic analyzer and Sigrok software. It allows you to capture signals, filter noise, measure pulse widths, plot signals, and save reports as PDF files on a USB flash drive.
+This Python program turns your Raspberry Pi into a logic analyzer using the [Hantek 4032L](https://sigrok.org/wiki/Hantek_4032L) USB-based 32-channel logic analyzer and [Sigrok software](https://sigrok.org/wiki/Main_Page). It allows you to capture signals, filter noise, measure pulse widths, plot signals, and save reports as PDF files on a USB flash drive.
 
 ## Features
 
@@ -178,15 +178,67 @@ You have successfully installed and configured the **analyzer-reporter** Python 
 ## Usage
 
 1. Run the Python program on your Raspberry Pi.
-2. Press the physical button to start capturing signals.
-3. LED lamp will blink to indicate the availability of the program.
-4. Press the button again to stop capturing signals.
+2. Press the physical button to capture signals.
+3. LED lamp will blink to indicate capturing or waiting for storage modes of the program. 
+4. LED lamp will on to indicate waiting for button press mode.
 5. Reports will be saved as PDF files on the USB flash drive with the current date and index of the attempt.
 
 ## Configuration
 
-- Modify the GPIO pin numbers in the Python program according to your setup.
-- Adjust the signal capture settings in the Python program as needed.
+The analyzer-reporter application can be configured to suit your specific requirements using the `config.py` file. This configuration file contains various parameters that control the behavior of the application. Below are the configurable options along with their descriptions:
+
+### Debugging
+
+- **DEBUG**: Set to `True` to enable debugging mode, which provides additional logging information for troubleshooting purposes.
+
+### Plotting
+
+- **SHOW_GRID**: Set to `True` to display gridlines on plots for better visualization.
+
+### GPIO Pin Numbers
+
+- **LED_PIN**: GPIO pin number for controlling the LED indicator.
+- **BUTTON_PIN**: GPIO pin number for the button input.
+
+### Interface
+
+- **BLINK_TIME**: Duration (in seconds) for LED blinking.
+- **BUTTON_TIMEOUT**: Timeout (in seconds) for button press detection.
+
+### Signal Processing
+
+- **FILTER_WSIZE**: Window size for signal filtering.
+
+### Data Capture
+
+- **REAL_CAPTURE**: Set to `True` to enable real signal capturing. Set to `False` to use example data.
+- **EXAMPLE_DATA**: Specifies the filename of the example data to be used if real capturing is not available (if `REAL_CAPTURE` is set to `False`).
+- **EXAMPLE_DATA_DIR**: Directory path for storing example data files.
+
+### Reporting
+
+- **ATTEMPT_POINT**: XY coordinates of the attempt number in the report canvas.
+- **DATE_POINT**: XY coordinates of the date in the report canvas.
+- **CURRENT_DATE**: Current date in YYYY-MM-DD format.
+
+### USB Storage
+
+- **USB_DEVICE**: USB device identifier.
+- **WRITE_THRESHOLD**: Threshold (in bytes) for USB storage write operations.
+
+### Paths and Files
+
+- **DATA_DIR_NAME**: Name of the directory for storing reports files.
+- **REPORT_NAME**: Format for naming report files.
+- **TEMPLATE_FILE**: Path to the template PDF file for report generation.
+- **LOG_FILE**: Path to the log file for storing application logs.
+
+### Colors Definition
+
+- **COLORS**: List of color codes for plotting.
+- **CLR_NAMES**: List of color names for reference.
+- **CLR_DICT**: Dictionary mapping color names to color codes.
+
 
 ## Contributing
 
@@ -194,4 +246,4 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 ## License
 
-[MIT License](LICENSE)
+This project is licensed under the [MIT License](LICENSE) - see the [LICENSE](./LICENSE) file for details.
