@@ -15,7 +15,7 @@ This Python program turns your Raspberry Pi into a logic analyzer using the [Han
 - Raspberry Pi
 - Hantek 4032L USB-based 32-channel logic analyzer
 - Sigrok software
-- Python 3.x
+- Python 3.x (Developed and tested on 3.9 and 3.11)
 - Required Python packages: numpy, pandas, matplotlib, scipy, reportlab, pypdf, RPi.GPIO, gpiozero
 - Physical button and LED lamp connected to Raspberry Pi GPIO pins
 - USB flash drive
@@ -201,6 +201,7 @@ The analyzer-reporter application can be configured to suit your specific requir
 ### Plotting
 
 - **SHOW_GRID**: Set to `True` to display gridlines on plots for better visualization.
+- **PLOT_WIDTH**: Control the plotting behavior regarding pulse widths. It can take values `"all"`, `"rising"`, `"falling"`, or `None`.
 
 ### GPIO Pin Numbers
 
@@ -246,6 +247,42 @@ The analyzer-reporter application can be configured to suit your specific requir
 - **CLR_NAMES**: List of color names for reference.
 - **CLR_DICT**: Dictionary mapping color names to color codes.
 
+## Changelog
+
+### Version 0.1.1 (April 7, 2024)
+
+#### SignalProcessor:
+- Added new property `rising_signals` to determine rising signals within each signal.
+- Refactored the `_filter_noise` method to use the `apply` function for improved performance.
+- Refactored the `_find_pulse_pivots` method to utilize the `apply` function for better efficiency.
+- Updated the `_calculate_pulse_metrics` method to directly compute pulse points and widths, resulting in a more streamlined approach.
+- Introduced the `_determine_rising_signals` method to determine rising signals based on pulse pivots.
+- Replaced the `_signal_pulse_count` and `_signal_pulse_width` methods with `_signal_pulse_points_width` for unified calculation of pulse points and widths.
+- Implemented the `_is_start_from_pulse` method to check if a signal starts from a pulse for accurate determination of pulse points and widths.
+- Introduced the `_is_rising_signal` method to determine if a signal is rising based on its pulse pivots.
+
+These changes enhance signal processing capabilities, improve code efficiency, and provide more accurate analysis of signal characteristics, including pulse points, widths, and rising signals.
+
+
+#### SignalGrapher:
+- Added a new parameter `rising_signals` to the constructor to incorporate information about rising signals.
+- Introduced the `_get_signals_to_plot` method to determine which signals to plot based on the `cfg.PLOT_WIDTH` configuration variable.
+- Modified the `plot_signals` method to plot signals and pulses based on the selected signals to plot according to their rising or falling nature, as specified by the `cfg.PLOT_WIDTH` configuration.
+- Enhanced flexibility by allowing plotting of all signals, only rising signals, or only falling signals based on the `cfg.PLOT_WIDTH` configuration.
+- Updated the initialization process to accommodate the `rising_signals` parameter.
+- Adjusted internal logic to ensure proper plotting of signals according to the selected criteria.
+
+These changes provide improved control over which signals to plot and enhance the visualization of signals and pulses based on their rising or falling characteristics, thereby facilitating more insightful analysis of the data.
+
+#### Configuration:
+- Added new attribute `PLOT_WIDTH` to control the plotting behavior regarding pulse widths. It can take values `"all"`, `"rising"`, `"falling"`, or `None`.
+
+
+#### analyzer_reporter.py:
+- Updated entry point to accommodate changes in SignalProcessor and SignalGrapher.
+- Adjusted functionality to reflect modifications made in both classes.
+
+
 ## Useful Sigrok Links
 
 Sigrok is a powerful open-source signal analysis software suite that supports various hardware devices for capturing, decoding, and analyzing signals. Below are some useful links related to Sigrok:
@@ -260,6 +297,7 @@ Sigrok is a powerful open-source signal analysis software suite that supports va
   - Visit this page to download the latest version of the Sigrok software suite for your operating system. Sigrok is available for various platforms, including Linux, Windows, and macOS.
 
 These links provide valuable resources for learning more about Sigrok, troubleshooting issues, and connecting with the Sigrok community. Whether you're a beginner or an experienced user, Sigrok offers a wide range of tools and support for your signal analysis needs.
+
 
 ## Contributing
 
