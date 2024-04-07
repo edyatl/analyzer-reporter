@@ -130,3 +130,6 @@ Session.vim
 # ENV
 .env
 
+# Pylint config
+.pylintrc
+
