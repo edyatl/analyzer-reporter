@@ -7,6 +7,7 @@
 """
 
 # This file is part of the analyzer_reporter project
+
 import sys
 import time
 import signal
@@ -126,15 +127,16 @@ def main() -> None:
     log_analyzer_controller_info(analyzer)
 
     if not df.empty:
-        signal_proc = SignalProcessor(df)
-        signal_proc.logger.debug(
+        processor = SignalProcessor(df)
+        processor.logger.debug(
             "Data processed and loaded to DataFrame: %s rows", df.shape[0]
         )
 
         grapher = SignalGrapher(
-            filtered_signals_df=signal_proc.filtered_signals_df,
-            pulse_counts=signal_proc.pulse_count,
-            pulse_points_width=signal_proc.pulse_points_width,
+            filtered_signals_df=processor.filtered_signals_df,
+            pulse_counts=processor.pulse_count,
+            pulse_points_width=processor.pulse_points_width,
+            rising_signals=processor.rising_signals,
         )
         grapher.plot_signals()
         grapher.logger.debug("Signals and pulses plotted")
@@ -151,7 +153,7 @@ def main() -> None:
 
         if usb_storage.ready_to_write:
             generator.generate_report()
-            generator.save_pulse_width_csv(signal_proc.pulse_width)
+            generator.save_pulse_width_csv(processor.pulse_width)
             generator.logger.debug("Report file %s saved.", generator.report_file)
 
 

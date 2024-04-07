@@ -18,6 +18,7 @@ class Configuration():
     # Plotting
     SHOW_GRID = True  # Show grid in plots
     TIME_UNITS = "ms"
+    PLOT_WIDTH = "all"  # "all" "rising" "falling" None
 
     # Define GPIO pin numbers
     LED_PIN = 23

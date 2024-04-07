@@ -9,7 +9,6 @@
 # This file is part of the analyzer_reporter project
 
 import pandas as pd
-
 import matplotlib.pyplot as plt
 from matplotlib import figure as pltfg
 
@@ -27,6 +26,7 @@ class SignalGrapher:
         filtered_signals_df: pd.DataFrame,
         pulse_counts: dict,
         pulse_points_width: dict,
+        rising_signals: dict,
     ) -> None:
         """
         Initialize SignalGrapher.
@@ -38,8 +38,10 @@ class SignalGrapher:
         self.filtered_signals_df = filtered_signals_df
         self.pulse_counts = pulse_counts
         self.pulse_points_width = pulse_points_width
-        self.figure: pltfg.Figure = None
+        self.rising_signals = rising_signals
+        self.signals_to_plot_widths: list = self._get_signals_to_plot()
         self.vlines: list = []
+        self.figure: pltfg.Figure = None
 
         self.logger.debug("Initialized %s", self.__class__.__name__)
 
@@ -69,7 +71,7 @@ class SignalGrapher:
             )
             axes[i].set_ylabel(col)
 
-            if col.endswith("4"):
+            if col in self.signals_to_plot_widths:
                 for x1, x2, width in self.pulse_points_width[col]:
                     self._plot_pulse_width(axes[i], x1, x2, width)
 
@@ -102,6 +104,17 @@ class SignalGrapher:
         """Plot vertical dashed lines."""
         ax.axvline(vline_x, color=cfg.CLR_DICT["purple"], linestyle="--")
 
+    def _get_signals_to_plot(self) -> list:
+        """Get the list of signal names to plot based on cfg.PLOT_WIDTH value."""
+        if cfg.PLOT_WIDTH == "all":
+            return list(self.rising_signals.keys())
+        elif cfg.PLOT_WIDTH == "rising":
+            return [key for key, value in self.rising_signals.items() if value]
+        elif cfg.PLOT_WIDTH == "falling":
+            return [key for key, value in self.rising_signals.items() if not value]
+        return []
+
     def add_vlines(self, vlines: list) -> None:
         """Add vertical dashed lines."""
         self.vlines = vlines
+
