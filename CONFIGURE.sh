@@ -109,7 +109,7 @@ cat <<EOF > "$CONFIG_FILE"
 #!/usr/bin/env python3
 #-*- coding: utf-8 -*-
 """
-    Developed by @edyatl <edyatl@yandex.ru> March 2024
+    Developed by @edyatl <edyatl@yandex.ru> April 2024
     https://github.com/edyatl
 
 """
