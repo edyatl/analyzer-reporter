@@ -108,13 +108,12 @@ class SignalGrapher:
         """Get the list of signal names to plot based on cfg.PLOT_WIDTH value."""
         if cfg.PLOT_WIDTH == "all":
             return list(self.rising_signals.keys())
-        elif cfg.PLOT_WIDTH == "rising":
+        if cfg.PLOT_WIDTH == "rising":
             return [key for key, value in self.rising_signals.items() if value]
-        elif cfg.PLOT_WIDTH == "falling":
+        if cfg.PLOT_WIDTH == "falling":
             return [key for key, value in self.rising_signals.items() if not value]
         return []
 
     def add_vlines(self, vlines: list) -> None:
         """Add vertical dashed lines."""
         self.vlines = vlines
-

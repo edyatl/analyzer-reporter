@@ -84,7 +84,5 @@ class AnalyzerController:
             self.logger.debug("Data loaded from file: %s", self.data_path)
             return df
         except (pd.errors.ParserError, FileNotFoundError) as e:
-            self.logger.error(
-                "Error occurred while loading sample data: %s", str(e)
-            )
+            self.logger.error("Error occurred while loading sample data: %s", str(e))
             return pd.DataFrame()

@@ -107,7 +107,7 @@ LOG_FILE=$(prompt_config_value "LOG_FILE" "analyzer_reporter.log")
 # Write the configuration values to the configuration file
 cat <<EOF > "$CONFIG_FILE"
 #!/usr/bin/env python3
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
     Developed by @edyatl <edyatl@yandex.ru> April 2024
     https://github.com/edyatl
@@ -117,7 +117,7 @@ import os
 from datetime import datetime
 
 
-class Configuration():
+class Configuration:
     """Configuration class"""
 
     # Debugging

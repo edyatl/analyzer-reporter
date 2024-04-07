@@ -116,4 +116,3 @@ class SignalProcessor:
         return {
             k: list(map(lambda x: x[2], v)) for k, v in self.pulse_points_width.items()
         }
-

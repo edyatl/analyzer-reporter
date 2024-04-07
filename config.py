@@ -9,7 +9,7 @@ import os
 from datetime import datetime
 
 
-class Configuration():
+class Configuration:
     """Configuration class"""
 
     # Debugging

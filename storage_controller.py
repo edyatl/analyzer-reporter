@@ -21,12 +21,53 @@ class StorageController:
 
     def __init__(self):
         self.logger.debug("Initialized %s", self.__class__.__name__)
+        self.usb_plugged = self.check_usb_plugged()
+        self.usb_mounted = False
+        self.mount_point = None
+        self.data_dir = None
+        self.pdf_files = []
+        self.last_pdf_report = None
+        self.last_pdf_report_date = None
+        self.last_pdf_report_idx = 0
+        self.current_pdf_report = None
+        self.current_pdf_report_idx = 0
+        self.free_space = 0
+        self.ready_to_write = False
         self.update()
 
-    @staticmethod
-    def check_usb_plugged() -> bool:
-        """Check if USB is plugged in."""
-        return os.path.exists(cfg.USB_DRIVE)
+    def update(self) -> None:
+        """Update instance variables."""
+        self.reset()
+
+        if self.usb_plugged:
+            self.get_mount_point()
+
+            if self.usb_mounted:
+                self._create_data_directory()
+                self.get_pdf_files()
+                self.get_last_pdf_report()
+                self.get_last_pdf_report_date()
+                self.get_last_pdf_report_idx()
+                self._set_current_pdf_report()
+                self.get_free_space()
+
+                if self.free_space > cfg.WRITE_TRESHOLD:
+                    self.ready_to_write = True
+
+    def reset(self) -> None:
+        """Reset instance variables."""
+        self.usb_plugged = self.check_usb_plugged()
+        self.usb_mounted = False
+        self.mount_point = None
+        self.data_dir = None
+        self.pdf_files = []
+        self.last_pdf_report = None
+        self.last_pdf_report_date = None
+        self.last_pdf_report_idx = 0
+        self.current_pdf_report = None
+        self.current_pdf_report_idx = 0
+        self.free_space = 0
+        self.ready_to_write = False
 
     def get_mount_point(self) -> None:
         """Get the mount point of the USB drive."""
@@ -83,35 +124,10 @@ class StorageController:
         statvfs: os.statvfs = os.statvfs(self.mount_point)
         self.free_space = statvfs.f_frsize * statvfs.f_bavail
 
-    def update(self) -> None:
-        """Update instance variables."""
-        self.usb_plugged = self.check_usb_plugged()
-        self.usb_mounted = False
-        self.mount_point = None
-        self.data_dir = None
-        self.pdf_files = []
-        self.last_pdf_report = None
-        self.last_pdf_report_date = None
-        self.last_pdf_report_idx = 0
-        self.current_pdf_report = None
-        self.current_pdf_report_idx = 0
-        self.free_space = 0
-        self.ready_to_write = False
-
-        if self.usb_plugged:
-            self.get_mount_point()
-
-            if self.usb_mounted:
-                self._create_data_directory()
-                self.get_pdf_files()
-                self.get_last_pdf_report()
-                self.get_last_pdf_report_date()
-                self.get_last_pdf_report_idx()
-                self._set_current_pdf_report()
-                self.get_free_space()
-
-                if self.free_space > cfg.WRITE_TRESHOLD:
-                    self.ready_to_write = True
+    @staticmethod
+    def check_usb_plugged() -> bool:
+        """Check if USB is plugged in."""
+        return os.path.exists(cfg.USB_DRIVE)
 
     @property
     def changed(self) -> bool:
