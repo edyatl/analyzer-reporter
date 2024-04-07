@@ -10,7 +10,6 @@
 
 import pandas as pd
 import numpy as np
-
 from scipy import signal
 
 from config import Configuration as cfg
@@ -34,56 +33,75 @@ class SignalProcessor:
         # Calculate pulse count and pulse width for each signal
         self.pulse_count, self.pulse_points_width = self._calculate_pulse_metrics()
 
+        self.rising_signals = self._determine_rising_signals()
+
         self.logger.debug("Initialized %s", self.__class__.__name__)
 
     def _filter_noise(self) -> pd.DataFrame:
         """Filter noise for each signal."""
-        filtered_signals = {}
-        for col in self.signals_df.columns:
-            filtered_signals[col] = signal.medfilt(
-                self.signals_df[col], cfg.FILTER_WSIZE
-            )
-        return pd.DataFrame(filtered_signals)
+        return self.signals_df.apply(lambda col: signal.medfilt(col, cfg.FILTER_WSIZE))
 
     def _find_pulse_pivots(self) -> pd.DataFrame:
         """Find pulse pivots for each signal."""
-        pulse_pivots = {}
-        for col in self.filtered_signals_df.columns:
-            pulse_pivots[col] = np.diff(self.filtered_signals_df[col])
-        return pd.DataFrame(pulse_pivots)
+        return self.filtered_signals_df.apply(np.diff)
 
     def _calculate_pulse_metrics(self) -> tuple:
         """Calculate pulse count and pulse width for each signal."""
         pulse_count = {}
         pulse_points_width = {}
         for col in self.pulse_pivots_df.columns:
-            pulse_count[col] = self._signal_pulse_count(self.pulse_pivots_df[col])
-            pulse_points_width[col] = [
-                self._signal_pulse_width(self.pulse_pivots_df[col], i)
-                for i in range(pulse_count[col])
-            ]
+            pulse_points_width[col] = self._signal_pulse_points_width(
+                self.pulse_pivots_df[col]
+            )
+            pulse_count[col] = len(pulse_points_width[col])
+
         return pulse_count, pulse_points_width
 
-    @staticmethod
-    def _signal_pulse_count(ser: pd.Series) -> int:
-        """Function to calculate number of pulses."""
-        count = 0
-        start_indices = np.where(np.atleast_1d(ser) == 1)[0]
-        for start_idx in start_indices:
-            # Find the index where the sequence ends with -1, with 0s in between
-            end_idx = np.where(np.atleast_1d(ser)[start_idx:] == -1)[0]
-            if len(end_idx) > 0:
-                count += 1
-        return count
+    def _determine_rising_signals(self) -> dict:
+        """Determine rising signals."""
+        return {
+            col: self._is_rising_signal(self.pulse_pivots_df[col])
+            for col in self.pulse_pivots_df.columns
+        }
 
     @staticmethod
-    def _signal_pulse_width(ser: pd.Series, n: int) -> tuple:
-        """Function to calculate pulse width."""
-        n = n << 1
-        ser_nonzero = np.atleast_1d(ser).nonzero()[0]
-        if ser[ser_nonzero[n]] < 0:
-            n += 1
-        return ser_nonzero[n], ser_nonzero[n + 1], ser_nonzero[n + 1] - ser_nonzero[n]
+    def _is_start_from_pulse(sig_pivots: pd.Series) -> bool:
+        """Function to check if signal is start from pulse."""
+        all_indices = np.atleast_1d(sig_pivots).nonzero()[0]
+        differences = np.diff(all_indices)
+        return np.sum(differences[::2]) < np.sum(differences[1::2])
+
+    @staticmethod
+    def _signal_pulse_points_width(sig_pivots: pd.Series) -> list:
+        """Function to calculate pulses points and width."""
+        all_indices = np.atleast_1d(sig_pivots).nonzero()[0]
+        differences = np.diff(all_indices)
+        if SignalProcessor._is_start_from_pulse(sig_pivots):
+            pulses_points, pulses_width = all_indices[:], differences[::2]
+        else:
+            pulses_points, pulses_width = all_indices[1:], differences[1::2]
+
+        # Ensure even number of pulse points
+        if len(pulses_points) % 2 != 0:
+            pulses_points = pulses_points[:-1]
+
+        pulses_points = np.split(pulses_points, len(pulses_points) // 2)
+
+        return [
+            np.append(_point, _width)
+            for _point, _width in zip(pulses_points, pulses_width)
+        ]
+
+    @staticmethod
+    def _is_rising_signal(_signal: pd.Series) -> bool:
+        """Function to check if signal is rising."""
+        all_indices = np.atleast_1d(_signal).nonzero()[0]
+        rising_edges = np.where(np.atleast_1d(_signal) == 1)[0]
+        first_edge_is_rising = all_indices[0] == rising_edges[0]
+
+        if SignalProcessor._is_start_from_pulse(_signal):
+            return first_edge_is_rising
+        return not first_edge_is_rising
 
     @property
     def pulse_points(self) -> dict:
@@ -98,3 +116,4 @@ class SignalProcessor:
         return {
             k: list(map(lambda x: x[2], v)) for k, v in self.pulse_points_width.items()
         }
+
